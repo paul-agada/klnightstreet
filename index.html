@@ -129,6 +129,72 @@
     opacity: 0.85;
   }
 
+  /* ---------- ENTRY GATE ---------- */
+
+  body.gate-active{ overflow: hidden; height: 100vh; }
+
+  .entry-gate{
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at center, rgba(24,17,10,0.98) 0%, var(--ink) 72%);
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+  }
+  .entry-gate.hidden{ opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .entry-gate-inner{ padding: 6vh 6vw; max-width: 480px; }
+
+  .entry-gate-eyebrow{
+    font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--amber); margin: 0 0 14px; font-weight: 600;
+  }
+
+  .entry-gate-title{
+    font-size: clamp(38px, 9vw, 84px);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.02em;
+    color: #fff5e6;
+    text-shadow:
+      0 0 6px rgba(255,235,200,0.9),
+      0 0 18px rgba(255,179,92,0.85),
+      0 0 40px rgba(255,138,61,0.7),
+      0 0 90px rgba(255,95,158,0.35);
+    animation: flicker 5.5s infinite ease-in-out;
+  }
+
+  .entry-gate-tag{ margin: 18px 0 40px; font-size: 14px; letter-spacing: 0.05em; color: var(--muted); line-height: 1.6; }
+
+  .entry-gate-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 38px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--amber-hot), var(--pink));
+    color: #180a05;
+    box-shadow: 0 10px 30px rgba(255,138,61,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .entry-gate-btn:hover{ transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255,138,61,0.5); }
+  .entry-gate-btn .icon{ font-size: 15px; }
+
+  .entry-gate-hint{ margin: 22px 0 0; font-size: 11px; letter-spacing: 0.1em; color: #6b6459; text-transform: uppercase; }
+
+  @media (max-width: 640px){
+    .entry-gate-btn{ padding: 14px 30px; font-size: 13px; }
+  }
+
   /* ---------- AUDIO TOGGLE ---------- */
 
   .audio-toggle{
@@ -307,7 +373,20 @@
   }
 </style>
 </head>
-<body>
+<body class="gate-active">
+
+<div id="entryGate" class="entry-gate">
+  <div class="entry-gate-inner">
+    <p class="entry-gate-eyebrow">Rampai Business Park · Kuala Lumpur</p>
+    <h1 class="entry-gate-title">KL NIGHT<br/>STREET</h1>
+    <p class="entry-gate-tag">A night market that only wakes after dark — with sound on, if you've got it.</p>
+    <button id="entryGateBtn" class="entry-gate-btn" type="button">
+      <span>Enter</span>
+      <span class="icon">🔊</span>
+    </button>
+    <p class="entry-gate-hint">Tap to enter with music</p>
+  </div>
+</div>
 
 <canvas id="bg"></canvas>
 
@@ -819,6 +898,18 @@ function stopBuskerAudio() {
 audioToggle.addEventListener('click', () => {
   if (audioWantsPlaying) stopBuskerAudio();
   else startBuskerAudio();
+});
+
+// Entry gate -- the visitor's one deliberate click both dismisses the gate
+// and starts the music in the same gesture, so there's no ambiguity about
+// whether "an interaction happened yet" the way a passive first-scroll is.
+const entryGate = document.getElementById('entryGate');
+const entryGateBtn = document.getElementById('entryGateBtn');
+
+entryGateBtn.addEventListener('click', () => {
+  startBuskerAudio();
+  entryGate.classList.add('hidden');
+  document.body.classList.remove('gate-active');
 });
 
 // Fire once on the very first interaction anywhere on the page, then
