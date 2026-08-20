@@ -4,3 +4,7 @@
 # Saved page snapshots (unrelated YouTube video pages, not used by the site)
 images/video*.html
 images/video*_files/
+
+# Raw/untrimmed source audio (not used by the site directly, and of
+# unconfirmed licensing -- only the trimmed placeholder loop is committed)
+music/Jalur Gemilang*.mp3
