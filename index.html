@@ -860,7 +860,10 @@ heroFrameGroup.add(buskerSound);
 
 let buskerSoundPendingPlay = false;
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load('music/street-ambience-loop.mp3', (buffer) => {
+// ?v= is bumped whenever the audio file itself changes, so returning visitors'
+// browsers fetch the new file instead of serving a stale cached copy of the
+// old one under the same URL.
+audioLoader.load('music/street-ambience-loop.mp3?v=2', (buffer) => {
   buskerSound.setBuffer(buffer);
   buskerSound.setLoop(true);
   if (buskerSoundPendingPlay) {
