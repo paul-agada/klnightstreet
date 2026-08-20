@@ -761,9 +761,14 @@ scene.add(heroBulb);
 // ---------- busker sign audio — a real speaker in the scene ----------
 // PositionalAudio lives on the hero/busker sign itself, so as the camera
 // dollies past it the music swells and fades like a real street speaker.
-// Nothing plays until the visitor opts in via the floating toggle button
-// (autoplay-with-sound is blocked by browsers anyway, and this keeps it
-// fully in the visitor's control).
+//
+// Browsers block silent/unprompted autoplay-with-sound outright -- there is
+// no way to make sound play before the visitor has interacted with the page
+// at all. This is the compliant equivalent of "plays on first visit": it
+// starts the instant the visitor's very first interaction happens anywhere
+// on the page (scroll, tap, click, key press), rather than requiring them to
+// specifically find and press the toggle button first. The toggle button
+// still works normally afterward to mute/unmute on demand.
 const listener = new THREE.AudioListener();
 camera.add(listener);
 
@@ -789,27 +794,48 @@ const audioToggle = document.getElementById('audioToggle');
 const audioIcon = audioToggle.querySelector('.audio-icon');
 let audioWantsPlaying = false;
 
-audioToggle.addEventListener('click', () => {
+function startBuskerAudio() {
+  if (audioWantsPlaying) return;
+  audioWantsPlaying = true;
   if (listener.context.state === 'suspended') listener.context.resume();
+  if (buskerSound.buffer) buskerSound.play();
+  else buskerSoundPendingPlay = true;
+  audioToggle.classList.add('playing');
+  audioToggle.setAttribute('aria-pressed', 'true');
+  audioToggle.setAttribute('aria-label', 'Mute background music');
+  audioIcon.textContent = '🔊';
+}
 
-  audioWantsPlaying = !audioWantsPlaying;
+function stopBuskerAudio() {
+  audioWantsPlaying = false;
+  if (buskerSound.isPlaying) buskerSound.pause();
+  buskerSoundPendingPlay = false;
+  audioToggle.classList.remove('playing');
+  audioToggle.setAttribute('aria-pressed', 'false');
+  audioToggle.setAttribute('aria-label', 'Play background music');
+  audioIcon.textContent = '🔇';
+}
 
-  if (audioWantsPlaying) {
-    if (buskerSound.buffer) buskerSound.play();
-    else buskerSoundPendingPlay = true;
-    audioToggle.classList.add('playing');
-    audioToggle.setAttribute('aria-pressed', 'true');
-    audioToggle.setAttribute('aria-label', 'Mute background music');
-    audioIcon.textContent = '🔊';
-  } else {
-    if (buskerSound.isPlaying) buskerSound.pause();
-    buskerSoundPendingPlay = false;
-    audioToggle.classList.remove('playing');
-    audioToggle.setAttribute('aria-pressed', 'false');
-    audioToggle.setAttribute('aria-label', 'Play background music');
-    audioIcon.textContent = '🔇';
-  }
+audioToggle.addEventListener('click', () => {
+  if (audioWantsPlaying) stopBuskerAudio();
+  else startBuskerAudio();
 });
+
+// Fire once on the very first interaction anywhere on the page, then
+// disarm permanently -- whether that first interaction was a scroll/tap
+// elsewhere (auto-start the music) or the toggle button itself (skip, and
+// let the button's own click handler decide, so a first-interaction mute
+// isn't immediately fought and turned back on).
+const firstInteractionEvents = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
+function removeFirstInteractionListeners() {
+  firstInteractionEvents.forEach(evt => window.removeEventListener(evt, handleFirstInteraction));
+}
+function handleFirstInteraction(e) {
+  removeFirstInteractionListeners();
+  if (e.target && e.target.closest && e.target.closest('#audioToggle')) return;
+  startBuskerAudio();
+}
+firstInteractionEvents.forEach(evt => window.addEventListener(evt, handleFirstInteraction, { passive: true }));
 
 // ---------- rising steam / ember particles ----------
 const particleCount = 220;
