@@ -252,6 +252,23 @@
 
   footer{ position: relative; z-index: 1; text-align: center; padding: 40px 20px 60px; font-size: 12px; letter-spacing: 0.08em; color: #6b6459; }
   footer a{ color: var(--amber); text-decoration: none; }
+  footer a:hover{ text-decoration: underline; }
+
+  .footer-line{ margin: 0 0 18px; }
+
+  .footer-legal{
+    margin: 0 0 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .footer-legal a{ margin: 0 8px; }
+  .footer-legal .dot{ opacity: 0.4; }
+
+  .footer-copy{ margin: 0 0 4px; font-size: 11px; letter-spacing: 0.06em; color: #55504a; }
+  .footer-powered{ margin: 0; font-size: 11px; letter-spacing: 0.06em; color: #55504a; }
 
   @media (max-width: 640px){
     .card{ padding: 28px 24px; }
@@ -502,7 +519,12 @@
 </main>
 
 <footer>
-  KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR · OPEN UNTIL 4AM
+  <p class="footer-line">KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR · OPEN UNTIL 4AM</p>
+  <p class="footer-legal">
+    <a href="terms.html">Terms &amp; Conditions</a><span class="dot">·</span><a href="privacy.html">Privacy Policy</a>
+  </p>
+  <p class="footer-copy">&copy; 2026. All Rights Reserved.</p>
+  <p class="footer-powered">Powered by Tera Holdings Sdn Bhd</p>
 </footer>
 
 <script type="importmap">
