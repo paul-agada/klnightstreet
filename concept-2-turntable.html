@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concept 2 — Neon Turntable · KL Night Street</title>
+<style>
+  :root{ --amber:#ffb35c; --amber-hot:#ff8a3d; --pink:#ff5f9e; --ink:#05060a; --paper:#f3ead9; --muted:#b9b0a2; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--ink); color:var(--paper); font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif; overflow-x:hidden; }
+  canvas#bg{ position:fixed; inset:0; width:100vw; height:100vh; display:block; z-index:0; }
+  main{ position:relative; z-index:1; }
+  section{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:8vh 6vw; text-align:center; pointer-events:none; }
+  section#s1{ justify-content:center; }
+  .tag{ font-size:11px; letter-spacing:.35em; text-transform:uppercase; color:var(--amber); margin:0 0 14px; font-weight:600; }
+  h1{ font-size:clamp(36px,7vw,84px); font-weight:800; margin:0; letter-spacing:.01em; color:#fff5e6;
+    text-shadow:0 0 6px rgba(255,235,200,.9),0 0 18px rgba(255,179,92,.85),0 0 40px rgba(255,138,61,.6); }
+  h2{ font-size:clamp(20px,2.6vw,28px); font-weight:700; margin:0 0 8px; color:var(--paper); }
+  p{ font-size:15px; line-height:1.7; color:var(--muted); max-width:480px; margin:8px auto 0; }
+  .badge{ margin-top:22px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber-hot); opacity:.85; }
+  .name-card{
+    pointer-events:auto; background:rgba(8,9,15,.55); border:1px solid rgba(255,179,92,.25); border-radius:16px;
+    padding:18px 26px; backdrop-filter:blur(6px); margin-bottom:6vh;
+  }
+  .backlink{ position:fixed; top:20px; left:20px; z-index:5; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); text-decoration:none; border:1px solid rgba(255,255,255,.2); padding:8px 14px; border-radius:999px;
+    background:rgba(5,6,10,.5); backdrop-filter:blur(4px); pointer-events:auto; }
+  .backlink:hover{ color:var(--paper); border-color:rgba(255,179,92,.5); }
+  .scroll-cue{ position:fixed; bottom:36px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:.3em;
+    text-transform:uppercase; color:var(--muted); opacity:.7; z-index:2; animation:bob 2.4s infinite ease-in-out; }
+  @keyframes bob{ 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(8px); } }
+</style>
+</head>
+<body>
+
+<a class="backlink" href="compare.html">← Back to compare</a>
+<canvas id="bg"></canvas>
+<div class="scroll-cue">Scroll to rotate</div>
+
+<main>
+  <section id="s1">
+    <p class="tag">Concept 02</p>
+    <h1>The Neon<br/>Turntable</h1>
+    <p>Six stalls, mounted on a slow-spinning ring around a glowing centre pole. Scroll turns the wheel — whichever stall faces you catches the light.</p>
+    <p class="badge">02 / 04 — Rotating carousel, camera holds still</p>
+  </section>
+  <section id="s2"><div class="name-card"><h2 id="activeName">fatta.kl</h2><p id="activeDesc">Grilled chicken, fried eggplant, greek yoghurt, crispy bread.</p></div></section>
+  <section id="s3"><div class="name-card"><h2 id="activeName2">—</h2><p id="activeDesc2">—</p></div></section>
+  <section id="s4">
+    <h2>Kuchai Lama, Kuala Lumpur</h2>
+    <p>Open till 4AM, every night.</p>
+    <p class="badge">End of concept 02</p>
+  </section>
+</main>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('bg');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x05060a);
+scene.fog = new THREE.FogExp2(0x05060a, 0.05);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.4, 18);
+camera.lookAt(0, 1.2, 0);
+
+scene.add(new THREE.AmbientLight(0x241f38, 0.7));
+scene.add(new THREE.HemisphereLight(0x2c2440, 0x08060c, 0.5));
+
+// ---------- reflective floor ----------
+const floorMat = new THREE.MeshStandardMaterial({ color:0x0c0c14, roughness:0.25, metalness:0.6 });
+const floor = new THREE.Mesh(new THREE.CircleGeometry(9, 48), floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -1.4;
+scene.add(floor);
+
+// the floor's own low-roughness/high-metalness material catches the neon
+// glow directly (a real duplicated reflection ring was tried and dropped --
+// it doubled the overexposure risk on close cards for very little payoff)
+
+// ---------- centre pole / neon sign ----------
+function makeNeonTexture(text, color){
+  const c = document.createElement('canvas'); c.width = 900; c.height = 240;
+  const ctx = c.getContext('2d');
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font = '800 100px "Segoe UI", Arial, sans-serif';
+  ctx.shadowColor = color; ctx.shadowBlur = 36;
+  ctx.fillStyle = '#fff6e8';
+  ctx.fillText(text, 450, 120);
+  ctx.shadowBlur = 16;
+  ctx.fillText(text, 450, 120);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+const poleMat = new THREE.MeshStandardMaterial({ color:0x1a1620, roughness:0.6, metalness:0.4, emissive:0x2a1a10, emissiveIntensity:0.3 });
+const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 6, 16), poleMat);
+pole.position.y = 1.2;
+scene.add(pole);
+
+const signTex = makeNeonTexture('KL NIGHT STREET', '#ff8a3d');
+const signMat = new THREE.MeshBasicMaterial({ map:signTex, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false });
+const sign = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 1.22), signMat);
+sign.position.set(0, 4.2, 0);
+scene.add(sign);
+
+const poleLight = new THREE.PointLight(0xffb35c, 2.2, 10, 2);
+poleLight.position.set(0, 2, 0);
+scene.add(poleLight);
+
+// ---------- carousel of stall cards ----------
+const vendors = [
+  { src:'images/17.webp', name:'fatta.kl', desc:'Grilled chicken, fried eggplant, greek yoghurt, crispy bread.', ar:574/1017 },
+  { src:'images/27.jpg',  name:'Cendawan Goreng', desc:'Crispy fried mushrooms, straight off the fryer.', ar:4/3 },
+  { src:'images/18.webp', name:"D'Dapur Cik Anur", desc:'Nasi goreng, tomyam, mee & kuey teow, sup tulang.', ar:574/1017 },
+  { src:'images/41.webp', name:'Hakim Lekor', desc:'Fried fish crackers, samosa, popia otak-otak.', ar:574/1017 },
+  { src:'images/34.webp', name:'Satay Row', desc:'Skewers over open charcoal, smoke rising all night.', ar:765/1017 },
+  { src:'images/36.webp', name:'The Long Tables', desc:'Open-air seating under a mile of festoon lights.', ar:3/2 },
+];
+
+const radius = 6.2;
+const texLoader = new THREE.TextureLoader();
+const cards = [];
+
+vendors.forEach((v, i) => {
+  const angle = (i / vendors.length) * Math.PI * 2;
+  const h = 2.4;
+  const w = h * v.ar;
+
+  const group = new THREE.Group();
+  const geo = new THREE.PlaneGeometry(w, h);
+  const mat = new THREE.MeshStandardMaterial({ color:0x1a1a22, roughness:0.75, transparent:true });
+  mat.userData.baseOpacity = 1;
+  const mesh = new THREE.Mesh(geo, mat);
+  group.add(mesh);
+
+  texLoader.load(v.src, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    mat.map = tex; mat.color.set(0xffffff);
+    mat.emissive = new THREE.Color(0x120d07); mat.emissiveIntensity = 0.08;
+    mat.needsUpdate = true;
+  });
+
+  const frameGeo = new THREE.PlaneGeometry(w+0.08, h+0.08);
+  const frameMat = new THREE.MeshBasicMaterial({ color:0xffb35c, transparent:true, opacity:0.5, side:THREE.DoubleSide });
+  frameMat.userData.baseOpacity = 0.5;
+  const frame = new THREE.Mesh(frameGeo, frameMat);
+  frame.position.z = -0.02;
+  group.add(frame);
+
+  group.position.set(Math.sin(angle)*radius, 1.2, Math.cos(angle)*radius);
+  group.lookAt(0, 1.2, 0);
+  group.userData = { angle, ...v };
+  scene.add(group);
+  cards.push(group);
+});
+
+// ---------- ambient rising particles ----------
+const particleCount = 140;
+const positions = new Float32Array(particleCount*3);
+const speeds = new Float32Array(particleCount);
+for (let i=0;i<particleCount;i++){
+  positions[i*3+0] = (Math.random()-0.5)*14;
+  positions[i*3+1] = -1.4 + Math.random()*6;
+  positions[i*3+2] = (Math.random()-0.5)*14;
+  speeds[i] = 0.2 + Math.random()*0.4;
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+const pMat = new THREE.PointsMaterial({ color:0xffb98a, size:0.05, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending, depthWrite:false });
+const particles = new THREE.Points(pGeo, pMat);
+scene.add(particles);
+
+// ---------- postprocessing ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(
+  new THREE.Vector2(Math.max(2,Math.round(window.innerWidth*0.75)), Math.max(2,Math.round(window.innerHeight*0.75))),
+  0.75, 0.6, 0.34);
+composer.addPass(bloom);
+
+// ---------- scroll drives rotation ----------
+function getScrollProgress(){
+  const max = document.body.scrollHeight - window.innerHeight;
+  if (max <= 0) return 0;
+  return Math.min(1, Math.max(0, window.scrollY / max));
+}
+function smoothstep(e0, e1, x){ const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
+
+const nameEl = document.getElementById('activeName');
+const descEl = document.getElementById('activeDesc');
+const nameEl2 = document.getElementById('activeName2');
+const descEl2 = document.getElementById('activeDesc2');
+let lastActive = -1;
+
+const clock = new THREE.Clock();
+const carousel = new THREE.Group();
+cards.forEach(c => {}); // cards already added directly to scene (rotated as a set below)
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const progress = getScrollProgress();
+
+  const rotation = progress * Math.PI * 2.4 + t * 0.02;
+  cards.forEach(group => {
+    const a = group.userData.angle + rotation;
+    group.position.set(Math.sin(a)*radius, 1.2 + Math.sin(t*0.6 + group.userData.angle)*0.05, Math.cos(a)*radius);
+    group.lookAt(0, 1.2, 0);
+  });
+  // find the card most facing the camera, and fade every card by how directly
+  // it faces the camera -- side-on cards (extreme grazing angle, heavily
+  // foreshortened) dim out instead of showing a distorted sliver of photo.
+  let bestIdx = 0, bestDot = -Infinity;
+  cards.forEach((group, i) => {
+    const dir = new THREE.Vector3().subVectors(camera.position, group.position).normalize();
+    const facing = new THREE.Vector3(0,0,1).applyQuaternion(group.quaternion);
+    const dot = dir.dot(facing);
+    if (dot > bestDot) { bestDot = dot; bestIdx = i; }
+
+    const fadeOpacity = smoothstep(0.35, 0.75, dot) * 0.9 + 0.1;
+    group.children.forEach(child => { if (child.material) child.material.opacity = fadeOpacity * (child.material.userData?.baseOpacity ?? 1); });
+  });
+  if (bestIdx !== lastActive){
+    lastActive = bestIdx;
+    const v = vendors[bestIdx];
+    nameEl.textContent = v.name; descEl.textContent = v.desc;
+    nameEl2.textContent = v.name; descEl2.textContent = v.desc;
+  }
+
+  sign.rotation.y = Math.sin(t*0.3)*0.03;
+  poleLight.intensity = 2.2 + Math.sin(t*3)*0.15;
+
+  const posAttr = pGeo.attributes.position;
+  for (let i=0;i<particleCount;i++){
+    let y = posAttr.array[i*3+1] + speeds[i]*0.01;
+    if (y > 4.6) y = -1.4;
+    posAttr.array[i*3+1] = y;
+  }
+  posAttr.needsUpdate = true;
+
+  bloom.strength = 0.75 + Math.sin(t*3.1)*0.05;
+  composer.render();
+}
+animate();
+
+function applySize(w,h){
+  if(!w || !h) return;
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h); composer.setSize(w,h);
+  bloom.resolution.set(Math.max(2,Math.round(w*0.75)), Math.max(2,Math.round(h*0.75)));
+}
+window.addEventListener('resize', () => applySize(window.innerWidth, window.innerHeight));
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') applySize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+
+</body>
+</html>

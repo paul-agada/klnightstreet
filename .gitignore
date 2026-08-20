@@ -1,0 +1,6 @@
+# OS cruft
+.DS_Store
+
+# Saved page snapshots (unrelated YouTube video pages, not used by the site)
+images/video*.html
+images/video*_files/

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KL Night Street — Compare Options</title>
+<style>
+  :root{
+    --amber:#ffb35c; --amber-hot:#ff8a3d; --pink:#ff5f9e;
+    --ink:#05060a; --paper:#f3ead9; --muted:#a79f92; --card:#0b0c12;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--ink); color:var(--paper);
+    font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:9vh 6vw 10vh; }
+  .eyebrow{ font-size:12px; letter-spacing:.35em; text-transform:uppercase; color:var(--amber); margin:0 0 14px; font-weight:600; text-align:center; }
+  h1{ text-align:center; font-size:clamp(30px,5vw,52px); font-weight:800; margin:0 0 14px; line-height:1.08; }
+  .lead{ text-align:center; color:var(--muted); max-width:620px; margin:0 auto 60px; font-size:15.5px; line-height:1.7; }
+
+  h2.group-title{ font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin:0 0 18px; padding-top:10px; border-top:1px solid rgba(255,255,255,.08); }
+  .group-title.first{ border-top:none; padding-top:0; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin-bottom:50px; }
+
+  a.card{
+    display:block; text-decoration:none; color:inherit; background:var(--card);
+    border:1px solid rgba(255,179,92,.16); border-radius:16px; padding:24px 22px;
+    transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  a.card:hover{ transform:translateY(-4px); border-color:rgba(255,179,92,.5); box-shadow:0 20px 50px rgba(0,0,0,.4); }
+
+  .card .num{ font-size:11px; letter-spacing:.2em; color:var(--amber-hot); text-transform:uppercase; margin-bottom:10px; display:block; }
+  .card h3{ margin:0 0 8px; font-size:19px; color:var(--paper); }
+  .card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.6; }
+  .card .meta{ margin-top:14px; font-size:11px; color:var(--amber); letter-spacing:.05em; }
+
+  .card.flagship{ background:linear-gradient(160deg, rgba(255,179,92,.1), rgba(255,95,158,.05)), var(--card); border-color:rgba(255,179,92,.4); }
+  .card.baseline{ opacity:.75; }
+  .card.baseline:hover{ opacity:1; }
+
+  footer{ text-align:center; color:#665f54; font-size:12px; letter-spacing:.06em; padding:20px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">KL Night Street · Rampai Business Park</p>
+  <h1>Compare the options</h1>
+  <p class="lead">One fix, four new directions. Open each on its own — scroll through it — then come back here to pick.</p>
+
+  <h2 class="group-title first">The fix — hero + continuous 3D scroll, merged</h2>
+  <div class="grid">
+    <a class="card flagship" href="index.html">
+      <span class="num">✓ Chosen direction — now the homepage</span>
+      <h3>The Merged Experience</h3>
+      <p>market.html's photo hero lives inside the same Three.js world as the original street-only.html walkthrough. The hero photo never swaps out — it physically travels back and becomes a hanging sign as you scroll. Twelve real vendor stalls as tilt cards, not backgrounds. Rampai Business Park, Kuala Lumpur.</p>
+      <span class="meta">→ index.html</span>
+    </a>
+  </div>
+
+  <h2 class="group-title">Four new 3D directions — pick a favourite</h2>
+  <div class="grid">
+    <a class="card" href="concept-1-cloud.html">
+      <span class="num">Concept 01</span>
+      <h3>The Floating Food Cloud</h3>
+      <p>Photo-frames hang loose in a dark void with soft bokeh lights. Scroll drifts you forward through them; mouse adds parallax. Calm, gallery-like, ambient.</p>
+      <span class="meta">→ concept-1-cloud.html</span>
+    </a>
+    <a class="card" href="concept-2-turntable.html">
+      <span class="num">Concept 02</span>
+      <h3>The Neon Turntable</h3>
+      <p>Six stalls mounted on a ring around a glowing neon centrepole. Scroll spins the wheel — camera holds still, a mirrored floor reflects it all. Playful, product-showcase feel.</p>
+      <span class="meta">→ concept-2-turntable.html</span>
+    </a>
+    <a class="card" href="concept-3-diorama.html">
+      <span class="num">Concept 03</span>
+      <h3>The Aerial Street Diorama</h3>
+      <p>The whole row as a lit model-village, canopies textured with real photos, seen from above. Scroll drops and orbits the camera down into street level.</p>
+      <span class="meta">→ concept-3-diorama.html</span>
+    </a>
+    <a class="card" href="concept-4-shaft.html">
+      <span class="num">Concept 04</span>
+      <h3>The Neon Signage Shaft</h3>
+      <p>A vertical shaft you spiral straight down through, passing a glowing sign per stall, ending on a wet reflective floor far below. Cinematic, moody, dramatic.</p>
+      <span class="meta">→ concept-4-shaft.html</span>
+    </a>
+  </div>
+
+  <h2 class="group-title">For reference — the two existing builds</h2>
+  <div class="grid">
+    <a class="card baseline" href="street-only.html">
+      <span class="num">Existing</span>
+      <h3>street-only.html</h3>
+      <p>The original pure-3D walkthrough street — no photos, everything built from geometry.</p>
+      <span class="meta">→ street-only.html</span>
+    </a>
+    <a class="card baseline" href="market.html">
+      <span class="num">Existing</span>
+      <h3>market.html</h3>
+      <p>The photo-hero version — real photos as full-bleed section backgrounds from section 2 down.</p>
+      <span class="meta">→ market.html</span>
+    </a>
+  </div>
+
+  <footer>KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR</footer>
+</div>
+</body>
+</html>

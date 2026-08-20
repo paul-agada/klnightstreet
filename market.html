@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KL Night Street — Kuchai Lama's Night Market</title>
+<meta name="description" content="KL Night Street, Kuchai Lama — real stalls, real food: fatta.kl, Cendawan Goreng, D'Dapur Cik Anur, live buskers, open till 4AM." />
+<style>
+  :root{
+    --amber: #ffb35c;
+    --amber-hot: #ff8a3d;
+    --pink: #ff5f9e;
+    --ink: #05060a;
+    --ink-2: #0b0d14;
+    --paper: #f3ead9;
+    --muted: #c3bcaf;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  img{ max-width: 100%; display: block; }
+
+  /* ---------- photo section scaffold ---------- */
+
+  .photo{
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .photo .frame{
+    position: absolute;
+    inset: -8% 0;
+    z-index: 0;
+  }
+
+  .photo .frame img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform;
+  }
+
+  .photo .scrim{
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(5,6,10,0.55) 0%, rgba(5,6,10,0.72) 45%, rgba(5,6,10,0.92) 100%);
+  }
+
+  .photo .content{
+    position: relative;
+    z-index: 2;
+  }
+
+  section{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8vh 6vw;
+  }
+
+  .card{
+    max-width: 760px;
+    background: linear-gradient(180deg, rgba(8,9,15,0.88), rgba(6,7,12,0.94));
+    border: 1px solid rgba(255,179,92,0.18);
+    border-radius: 18px;
+    padding: 40px 44px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+  }
+
+  .eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+
+  h1, h2{
+    margin: 0 0 16px;
+    line-height: 1.05;
+    font-weight: 800;
+  }
+
+  h2{
+    font-size: clamp(28px, 4vw, 44px);
+    color: var(--paper);
+  }
+
+  p{
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  strong{ color: var(--paper); }
+
+  /* ---------- HERO ---------- */
+
+  #hero{
+    flex-direction: column;
+    text-align: center;
+    padding-top: 0;
+  }
+
+  #hero .frame img{
+    animation: kenburns 26s ease-in-out infinite alternate;
+    object-position: center 42%;
+  }
+
+  @keyframes kenburns{
+    0%{ transform: scale(1.06) translateY(0); }
+    100%{ transform: scale(1.16) translateY(-2%); }
+  }
+
+  canvas#embers{
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .neon-title{
+    font-size: clamp(48px, 11vw, 128px);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    margin: 0;
+    color: #fff5e6;
+    text-shadow:
+      0 0 6px rgba(255,235,200,0.9),
+      0 0 18px rgba(255,179,92,0.85),
+      0 0 40px rgba(255,138,61,0.7),
+      0 0 90px rgba(255,95,158,0.35);
+    animation: flicker 5.5s infinite ease-in-out;
+  }
+
+  .neon-sub{
+    margin-top: 10px;
+    font-size: clamp(14px, 2vw, 20px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-shadow: 0 0 12px rgba(255,179,92,0.7);
+  }
+
+  .hero-tagline{
+    margin-top: 34px;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .hero-pills{
+    display:flex;
+    gap: 14px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pill{
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,179,92,0.4);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--paper);
+    background: rgba(5,6,10,0.35);
+  }
+
+  .scroll-cue{
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.75;
+    animation: bob 2.4s infinite ease-in-out;
+    z-index: 2;
+  }
+
+  .scroll-cue span{
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .scroll-cue .line{
+    width: 1px;
+    height: 42px;
+    background: linear-gradient(180deg, var(--amber), transparent);
+  }
+
+  @keyframes bob{
+    0%, 100%{ transform: translateX(-50%) translateY(0); }
+    50%{ transform: translateX(-50%) translateY(10px); }
+  }
+
+  @keyframes flicker{
+    0%, 92%, 100%{ opacity: 1; }
+    93%{ opacity: 0.82; }
+    94%{ opacity: 1; }
+    95%{ opacity: 0.7; }
+    96%{ opacity: 1; }
+  }
+
+  /* ---------- VENDORS ---------- */
+
+  #vendors{ align-items: center; padding-top: 12vh; padding-bottom: 12vh; }
+
+  .vendors-wrap{ max-width: 1080px; width: 100%; }
+
+  .vendors-head{ text-align: center; margin-bottom: 40px; }
+
+  .vendor-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .vendor-card{
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,179,92,0.16);
+    background: #0b0c12;
+    min-height: 340px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .vendor-card img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .vendor-card:hover img{ transform: scale(1.06); }
+
+  .vendor-card .v-scrim{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5,6,10,0) 30%, rgba(5,6,10,0.94) 100%);
+  }
+
+  .vendor-card .v-body{
+    position: relative;
+    padding: 20px;
+    z-index: 1;
+  }
+
+  .vendor-card .v-tag{
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber-hot);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .vendor-card h3{
+    margin: 0 0 6px;
+    font-size: 19px;
+    color: var(--paper);
+  }
+
+  .vendor-card p{
+    font-size: 13.5px;
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .vendor-card .v-price{
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--amber);
+    border: 1px solid rgba(255,179,92,0.35);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .vendors-note{
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ---------- EXPERIENCE GALLERY ---------- */
+
+  #experience{ padding-top: 10vh; padding-bottom: 10vh; }
+
+  .exp-wrap{ max-width: 1080px; width: 100%; }
+
+  .exp-head{ margin-bottom: 34px; }
+
+  .exp-gallery{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .exp-photo{
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    border: 1px solid rgba(255,179,92,0.14);
+  }
+
+  .exp-photo img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .exp-photo .e-scrim{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5,6,10,0) 55%, rgba(5,6,10,0.92) 100%);
+  }
+
+  .exp-photo .e-label{
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    z-index: 1;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--paper);
+    font-weight: 600;
+  }
+
+  .exp-facts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 30px;
+  }
+
+  .exp-fact{
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .exp-fact .icon{ font-size: 18px; }
+
+  .exp-fact h4{
+    margin: 0 0 3px;
+    font-size: 14px;
+    color: var(--paper);
+  }
+
+  .exp-fact p{
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ---------- VISIT ---------- */
+
+  #visit .card{ text-align: center; }
+
+  .hours-badge{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 18px 0 22px;
+    padding: 14px 26px;
+    border-radius: 14px;
+    background: rgba(255,95,158,0.1);
+    border: 1px solid rgba(255,95,158,0.32);
+  }
+
+  .hours-badge .big{
+    font-size: 30px;
+    font-weight: 800;
+    color: #ffdfc2;
+    text-shadow: 0 0 18px rgba(255,138,61,0.6);
+  }
+
+  .hours-badge .small{
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cta-row{
+    display:flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn.primary{
+    background: linear-gradient(135deg, var(--amber-hot), var(--pink));
+    color: #180a05;
+    box-shadow: 0 10px 30px rgba(255,138,61,0.35);
+  }
+
+  .btn.ghost{
+    border: 1px solid rgba(255,255,255,0.28);
+    color: var(--paper);
+  }
+
+  .btn:hover{ transform: translateY(-2px); }
+
+  footer{
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 20px 60px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #6b6459;
+    background: var(--ink);
+  }
+
+  @media (max-width: 640px){
+    .card{ padding: 28px 24px; }
+    section{ padding: 10vh 5vw; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+
+  <section id="hero" class="photo">
+    <div class="frame"><img src="images/22.webp" alt="Live buskers performing under string lights at KL Night Street, rows of yellow stalls stretching into the distance" /></div>
+    <div class="scrim"></div>
+    <canvas id="embers"></canvas>
+    <div class="content">
+      <p class="eyebrow">Kuchai Lama · Kuala Lumpur</p>
+      <h1 class="neon-title">KL NIGHT<br/>STREET</h1>
+      <p class="neon-sub">A Night Market That Only Wakes After Dark</p>
+      <p class="hero-tagline">fatta.kl · Cendawan Goreng · D'Dapur Cik Anur · live buskers · open till 4AM</p>
+      <div class="hero-pills">
+        <span class="pill">Palestinian Food</span>
+        <span class="pill">Malay Comfort Food</span>
+        <span class="pill">Keropok Lekor</span>
+        <span class="pill">Live Music</span>
+      </div>
+    </div>
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <div class="line"></div>
+    </div>
+  </section>
+
+  <section id="about" class="photo">
+    <div class="frame"><img src="images/15.webp" alt="KL Night Street at dusk, yellow tent stalls setting up along the row" data-parallax="0.18" /></div>
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="card">
+        <p class="eyebrow">The Street</p>
+        <h2>A culinary haven that comes alive after dark.</h2>
+        <p>Nestled in <strong>Kuchai Lama</strong>, KL Night Street is where the city exhales after sunset — tents go up, woks fire up, and buskers set up their mics as the smell of charcoal and spice fills the row.</p>
+        <p>It's not one cuisine, it's a whole street of them: Palestinian, Malay, and every fried snack in between, all shoulder to shoulder. Open until <strong>4AM</strong>, every single night.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="vendors" class="photo">
+    <div class="frame"><img src="images/36.webp" alt="Tables full of diners under festoon lights at KL Night Street" data-parallax="0.15" /></div>
+    <div class="scrim"></div>
+    <div class="content vendors-wrap">
+      <div class="vendors-head">
+        <p class="eyebrow">The Stalls</p>
+        <h2>Real vendors. Real menus. Real night.</h2>
+      </div>
+      <div class="vendor-grid">
+
+        <div class="vendor-card">
+          <img src="images/17.webp" alt="fatta.kl stall serving Palestinian food at KL Night Street" />
+          <div class="v-scrim"></div>
+          <div class="v-body">
+            <span class="v-tag">Palestinian · fatta.kl</span>
+            <h3>Fatta &amp; Batata Harra</h3>
+            <p>Grilled chicken, fried eggplant, greek yoghurt, crispy bread. Spiced potato cubes with homemade sauce on the side.</p>
+            <span class="v-price">Fatta RM15–18 · Batata Harra RM10</span>
+          </div>
+        </div>
+
+        <div class="vendor-card">
+          <img src="images/27.jpg" alt="Cendawan Goreng fried mushroom stall" />
+          <div class="v-scrim"></div>
+          <div class="v-body">
+            <span class="v-tag">Snacks · Cendawan Goreng</span>
+            <h3>Cendawan Goreng</h3>
+            <p>Crispy fried mushrooms, straight off the fryer — original, cheese, or spicy cheese.</p>
+          </div>
+        </div>
+
+        <div class="vendor-card">
+          <img src="images/18.webp" alt="D'Dapur Cik Anur Malay food stall menu board" />
+          <div class="v-scrim"></div>
+          <div class="v-body">
+            <span class="v-tag">Malay · D'Dapur Cik Anur</span>
+            <h3>Masakan Panas</h3>
+            <p>A full menu of nasi goreng varieties, tomyam, mee &amp; kuey teow, sup tulang, and more — cooked to order.</p>
+          </div>
+        </div>
+
+        <div class="vendor-card">
+          <img src="images/41.webp" alt="Hakim Lekor stall selling keropok lekor and fried snacks" />
+          <div class="v-scrim"></div>
+          <div class="v-body">
+            <span class="v-tag">Snacks · Hakim Lekor</span>
+            <h3>Keropok Lekor</h3>
+            <p>Fried fish crackers, samosa, popia otak-otak, and steamboat goreng — the late-night snack run stop.</p>
+            <span class="v-price">Samosa RM1.50 · Popia Otak-Otak RM0.90</span>
+          </div>
+        </div>
+
+      </div>
+      <p class="vendors-note">And that's only four stalls of many — walk the row and there's always one more worth stopping for.</p>
+    </div>
+  </section>
+
+  <section id="experience" class="photo">
+    <div class="frame"><img src="images/34.webp" alt="Satay grilling over charcoal at KL Night Street" data-parallax="0.12" /></div>
+    <div class="scrim"></div>
+    <div class="content exp-wrap">
+      <div class="exp-head">
+        <p class="eyebrow">After Dark</p>
+        <h2>More than food. It's a whole night out.</h2>
+      </div>
+
+      <div class="exp-gallery">
+        <div class="exp-photo">
+          <img src="images/22.webp" alt="Live buskers performing at KL Night Street" style="object-position:center 20%;" />
+          <div class="e-scrim"></div>
+          <div class="e-label">Live buskers, every night</div>
+        </div>
+        <div class="exp-photo">
+          <img src="images/36.webp" alt="Diners at tables under string lights" />
+          <div class="e-scrim"></div>
+          <div class="e-label">Open-air tables, packed and easy</div>
+        </div>
+        <div class="exp-photo">
+          <img src="images/34.webp" alt="Satay grilling over hot charcoal" />
+          <div class="e-scrim"></div>
+          <div class="e-label">Satay, straight off the charcoal</div>
+        </div>
+        <div class="exp-photo">
+          <img src="images/20.webp" alt="Fresh fruit stall, cut to order" />
+          <div class="e-scrim"></div>
+          <div class="e-label">Fresh fruit, cut to order</div>
+        </div>
+      </div>
+
+      <div class="exp-facts">
+        <div class="exp-fact">
+          <div class="icon">🛍️</div>
+          <div>
+            <h4>Stalls Beyond Food</h4>
+            <p>Clothing and jewellery finds at prices worth stopping for.</p>
+          </div>
+        </div>
+        <div class="exp-fact">
+          <div class="icon">🚗</div>
+          <div>
+            <h4>Free Parking</h4>
+            <p>Ample parking, so you can just show up and lepak.</p>
+          </div>
+        </div>
+        <div class="exp-fact">
+          <div class="icon">🌙</div>
+          <div>
+            <h4>Open Spaces</h4>
+            <p>Comfortable, relaxed seating to slow down and enjoy the night.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit" class="photo">
+    <div class="frame"><img src="images/36.webp" alt="KL Night Street row of stalls at night" data-parallax="0.15" /></div>
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="card">
+        <p class="eyebrow">Visit Us</p>
+        <h2>Kuchai Lama, Kuala Lumpur</h2>
+        <div class="hours-badge">
+          <span class="big">Open Till 4AM</span>
+          <span class="small">Every Night</span>
+        </div>
+        <p>Ample free parking and open-air seating — come as you are, stay as late as you like.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="https://www.google.com/maps/search/KL+Night+Street+Kuchai+Lama" target="_blank" rel="noopener">Get Directions</a>
+          <a class="btn ghost" href="#hero">Back to Top</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  KL NIGHT STREET · KUCHAI LAMA, KUALA LUMPUR · OPEN UNTIL 4AM
+</footer>
+
+<script>
+  // ---------- lightweight parallax on background photos ----------
+  const layers = Array.from(document.querySelectorAll('.frame img[data-parallax]'));
+  let ticking = false;
+
+  function updateParallax(){
+    const vh = window.innerHeight;
+    layers.forEach(img => {
+      const rect = img.parentElement.parentElement.getBoundingClientRect();
+      const strength = parseFloat(img.dataset.parallax) || 0.15;
+      const centerOffset = (rect.top + rect.height / 2) - vh / 2;
+      const shift = centerOffset * strength * -0.15;
+      img.style.transform = `translateY(${shift}px) scale(1.12)`;
+    });
+    ticking = false;
+  }
+
+  function onScroll(){
+    if (!ticking){
+      requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  updateParallax();
+
+  // ---------- hero ember particles (lightweight 2D canvas, hero only) ----------
+  const canvas = document.getElementById('embers');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+
+  function resize(){
+    const hero = document.getElementById('hero');
+    w = canvas.width = hero.clientWidth;
+    h = canvas.height = hero.clientHeight;
+  }
+
+  function makeParticles(){
+    const count = Math.min(70, Math.floor((w * h) / 18000));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0.6 + Math.random() * 1.8,
+      speed: 0.15 + Math.random() * 0.4,
+      drift: (Math.random() - 0.5) * 0.3,
+      alpha: 0.25 + Math.random() * 0.5,
+    }));
+  }
+
+  function tick(){
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#ffcf8a';
+    for (const p of particles){
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      p.y -= p.speed;
+      p.x += p.drift;
+      if (p.y < -10){
+        p.y = h + 10;
+        p.x = Math.random() * w;
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+
+  resize();
+  makeParticles();
+  tick();
+  window.addEventListener('resize', () => { resize(); makeParticles(); });
+</script>
+
+</body>
+</html>

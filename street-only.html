@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KL Night Street — Kuchai Lama's Night Market</title>
+<meta name="description" content="KL Night Street, Kuchai Lama — authentic Thai, Malay, Arabic and Chinese street food, live buskers, and stalls until 4AM." />
+<style>
+  :root{
+    --amber: #ffb35c;
+    --amber-hot: #ff8a3d;
+    --pink: #ff5f9e;
+    --ink: #05060a;
+    --ink-2: #0b0d14;
+    --paper: #f3ead9;
+    --muted: #b9b0a2;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  canvas#bg{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    z-index: 0;
+  }
+
+  main{
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+  }
+
+  section{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8vh 6vw;
+  }
+
+  .card{
+    max-width: 720px;
+    background: linear-gradient(180deg, rgba(8,9,15,0.92), rgba(6,7,12,0.96));
+    border: 1px solid rgba(255,179,92,0.18);
+    border-radius: 18px;
+    padding: 40px 44px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+
+  .eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+
+  h1, h2{
+    margin: 0 0 16px;
+    line-height: 1.05;
+    font-weight: 800;
+  }
+
+  h2{
+    font-size: clamp(28px, 4vw, 44px);
+    color: var(--paper);
+  }
+
+  p{
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  strong{ color: var(--paper); }
+
+  /* ---------- HERO ---------- */
+
+  #hero{
+    position: relative;
+    flex-direction: column;
+    text-align: center;
+    padding-top: 0;
+  }
+
+  .neon-title{
+    font-size: clamp(48px, 11vw, 128px);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    margin: 0;
+    color: #fff5e6;
+    text-shadow:
+      0 0 6px rgba(255,235,200,0.9),
+      0 0 18px rgba(255,179,92,0.85),
+      0 0 40px rgba(255,138,61,0.7),
+      0 0 90px rgba(255,95,158,0.35);
+    animation: flicker 5.5s infinite ease-in-out;
+  }
+
+  .neon-sub{
+    margin-top: 10px;
+    font-size: clamp(14px, 2vw, 20px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-shadow: 0 0 12px rgba(255,179,92,0.7);
+  }
+
+  .hero-tagline{
+    margin-top: 34px;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .hero-pills{
+    display:flex;
+    gap: 14px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pill{
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,179,92,0.35);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .scroll-cue{
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.75;
+    animation: bob 2.4s infinite ease-in-out;
+  }
+
+  .scroll-cue span{
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .scroll-cue .line{
+    width: 1px;
+    height: 42px;
+    background: linear-gradient(180deg, var(--amber), transparent);
+  }
+
+  @keyframes bob{
+    0%, 100%{ transform: translateX(-50%) translateY(0); }
+    50%{ transform: translateX(-50%) translateY(10px); }
+  }
+
+  @keyframes flicker{
+    0%, 92%, 100%{ opacity: 1; }
+    93%{ opacity: 0.82; }
+    94%{ opacity: 1; }
+    95%{ opacity: 0.7; }
+    96%{ opacity: 1; }
+  }
+
+  /* ---------- MENU ---------- */
+
+  #flavours{ align-items: center; }
+
+  .flavour-wrap{ max-width: 980px; width: 100%; }
+
+  .flavour-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .dish{
+    background: linear-gradient(180deg, rgba(255,179,92,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,179,92,0.16);
+    border-radius: 14px;
+    padding: 20px 18px;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .dish:hover{
+    transform: translateY(-4px);
+    border-color: rgba(255,179,92,0.5);
+  }
+
+  .dish .tag{
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber-hot);
+    margin-bottom: 8px;
+    display:block;
+  }
+
+  .dish h3{
+    margin: 0 0 6px;
+    font-size: 18px;
+    color: var(--paper);
+  }
+
+  .dish p{
+    font-size: 14px;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .cuisine-line{
+    margin-top: 26px;
+    font-size: 14px;
+    color: var(--muted);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 18px;
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+
+  .exp-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-top: 30px;
+  }
+
+  .exp-item{
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .exp-icon{
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,179,92,0.12);
+    border: 1px solid rgba(255,179,92,0.3);
+    font-size: 18px;
+  }
+
+  .exp-item h3{
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: var(--paper);
+    letter-spacing: 0.02em;
+  }
+
+  .exp-item p{
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  /* ---------- VISIT ---------- */
+
+  #visit .card{ text-align: center; }
+
+  .hours-badge{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 18px 0 22px;
+    padding: 14px 26px;
+    border-radius: 14px;
+    background: rgba(255,95,158,0.08);
+    border: 1px solid rgba(255,95,158,0.3);
+  }
+
+  .hours-badge .big{
+    font-size: 30px;
+    font-weight: 800;
+    color: #ffdfc2;
+    text-shadow: 0 0 18px rgba(255,138,61,0.6);
+  }
+
+  .hours-badge .small{
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cta-row{
+    display:flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn.primary{
+    background: linear-gradient(135deg, var(--amber-hot), var(--pink));
+    color: #180a05;
+    box-shadow: 0 10px 30px rgba(255,138,61,0.35);
+  }
+
+  .btn.ghost{
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--paper);
+  }
+
+  .btn:hover{ transform: translateY(-2px); }
+
+  footer{
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 20px 60px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #6b6459;
+  }
+
+  footer a{ color: var(--amber); text-decoration: none; }
+
+  @media (max-width: 640px){
+    .card{ padding: 28px 24px; }
+    section{ padding: 10vh 5vw; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<main>
+
+  <section id="hero">
+    <p class="eyebrow">Kuchai Lama · Kuala Lumpur</p>
+    <h1 class="neon-title">KL NIGHT<br/>STREET</h1>
+    <p class="neon-sub">A Night Market That Only Wakes After Dark</p>
+    <p class="hero-tagline">Thai, Malay, Arabic &amp; Chinese street food · live buskers · open till 4AM</p>
+    <div class="hero-pills">
+      <span class="pill">Tom Yum</span>
+      <span class="pill">Green Curry</span>
+      <span class="pill">Pad Thai</span>
+      <span class="pill">Live Music</span>
+    </div>
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <div class="line"></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="card">
+      <p class="eyebrow">The Street</p>
+      <h2>A culinary haven that comes alive after dark.</h2>
+      <p>Nestled in <strong>Kuchai Lama</strong>, KL Night Street is where the city exhales after sunset — stalls light up, woks fire up, and the street fills with the smell of Tom Yum and charcoal smoke.</p>
+      <p>It's the kind of place you come for a proper late-night dinner, or just to <strong>lepak and chill</strong> with friends until the early hours. Open until <strong>4AM</strong>, every single night.</p>
+    </div>
+  </section>
+
+  <section id="flavours">
+    <div class="flavour-wrap">
+      <p class="eyebrow" style="text-align:center;">Taste the Street</p>
+      <h2 style="text-align:center;">Authentic Thai, straight to your table.</h2>
+      <div class="flavour-grid">
+        <div class="dish">
+          <span class="tag">Thai Classic</span>
+          <h3>Tom Yum</h3>
+          <p>Sour, spicy, and loaded with seafood — the dish that started it all.</p>
+        </div>
+        <div class="dish">
+          <span class="tag">Thai Classic</span>
+          <h3>Green Curry</h3>
+          <p>Rich coconut broth with a slow, herbal heat.</p>
+        </div>
+        <div class="dish">
+          <span class="tag">Thai Classic</span>
+          <h3>Pad Thai</h3>
+          <p>Wok-fried noodles, tamarind, and lime — done right.</p>
+        </div>
+        <div class="dish">
+          <span class="tag">Local Favourite</span>
+          <h3>Bihun Sup Utara</h3>
+          <p>A northern-style soup that regulars keep coming back for.</p>
+        </div>
+        <div class="dish">
+          <span class="tag">Local Favourite</span>
+          <h3>Koey Tiaw Goreng</h3>
+          <p>Smoky, dark, and fried the old-fashioned way.</p>
+        </div>
+      </div>
+      <p class="cuisine-line">And beyond Thai — a full street of local Malay, Arabic and Chinese delicacies, all within a few steps of each other.</p>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="card">
+      <p class="eyebrow">After Dark</p>
+      <h2>More than food. It's a whole night out.</h2>
+      <div class="exp-grid">
+        <div class="exp-item">
+          <div class="exp-icon">🎤</div>
+          <div>
+            <h3>Live Buskers</h3>
+            <p>Talented street performers set the soundtrack for the night.</p>
+          </div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-icon">🛍️</div>
+          <div>
+            <h3>Stalls Beyond Food</h3>
+            <p>Clothing and jewellery finds at prices worth stopping for.</p>
+          </div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-icon">🚗</div>
+          <div>
+            <h3>Free Parking</h3>
+            <p>Ample parking, so you can just show up and lepak.</p>
+          </div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-icon">🌙</div>
+          <div>
+            <h3>Open Spaces</h3>
+            <p>Comfortable, relaxed seating to slow down and enjoy the night.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit">
+    <div class="card">
+      <p class="eyebrow">Visit Us</p>
+      <h2>Kuchai Lama, Kuala Lumpur</h2>
+      <div class="hours-badge">
+        <span class="big">Open Till 4AM</span>
+        <span class="small">Every Night</span>
+      </div>
+      <p>Ample free parking and open-air seating — come as you are, stay as late as you like.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://www.google.com/maps/search/KL+Night+Street+Kuchai+Lama" target="_blank" rel="noopener">Get Directions</a>
+        <a class="btn ghost" href="#hero">Back to Top</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  KL NIGHT STREET · KUCHAI LAMA, KUALA LUMPUR · OPEN UNTIL 4AM
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('bg');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+const bgColor = 0x05060c;
+scene.background = new THREE.Color(bgColor);
+scene.fog = new THREE.FogExp2(bgColor, 0.045);
+
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 2.4, 10);
+
+// ---------- lights ----------
+scene.add(new THREE.AmbientLight(0x1a1830, 0.6));
+const hemi = new THREE.HemisphereLight(0x2a2440, 0x08060a, 0.5);
+scene.add(hemi);
+
+// ---------- ground (street) ----------
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x14131a, roughness: 0.85, metalness: 0.1 });
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 220), groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.z = -90;
+scene.add(ground);
+
+// faint centre reflection strip
+const stripMat = new THREE.MeshStandardMaterial({ color: 0x1c1a22, roughness: 0.4, metalness: 0.3 });
+const strip = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 220), stripMat);
+strip.rotation.x = -Math.PI / 2;
+strip.position.set(0, 0.01, -90);
+scene.add(strip);
+
+// ---------- stalls ----------
+const canopyColors = [0xffb35c, 0xff8a3d, 0xffd27a, 0xff6f61];
+const stallGroup = new THREE.Group();
+scene.add(stallGroup);
+
+function makeStall(x, z, side) {
+  const g = new THREE.Group();
+
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x0e0d12, roughness: 0.9 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 1.6), bodyMat);
+  body.position.y = 0.8;
+  g.add(body);
+
+  const canopyColor = canopyColors[Math.floor(Math.random() * canopyColors.length)];
+  const canopyMat = new THREE.MeshStandardMaterial({
+    color: canopyColor,
+    roughness: 0.6,
+    emissive: new THREE.Color(canopyColor).multiplyScalar(0.12),
+  });
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.18, 2.0), canopyMat);
+  canopy.position.y = 1.75;
+  canopy.rotation.z = side * -0.05;
+  g.add(canopy);
+
+  // small warm point light glowing from within each stall (sparse, cheap)
+  const bulb = new THREE.PointLight(canopyColor, 1.4, 5, 2);
+  bulb.position.set(0, 1.5, side * 0.6);
+  g.add(bulb);
+
+  g.position.set(x, 0, z);
+  return g;
+}
+
+const stallRows = 8;
+const spacing = 8;
+for (let i = 0; i < stallRows; i++) {
+  const z = -6 - i * spacing;
+  stallGroup.add(makeStall(-5.2, z, 1));
+  stallGroup.add(makeStall(5.2, z + spacing / 2, -1));
+}
+
+// ---------- garland string lights ----------
+const bulbGeo = new THREE.SphereGeometry(0.055, 8, 8);
+const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffcf8a });
+const totalBulbsPerStrand = 26;
+const strandCount = 9;
+const bulbsInstanced = new THREE.InstancedMesh(bulbGeo, bulbMat, totalBulbsPerStrand * strandCount);
+let bulbIndex = 0;
+const dummy = new THREE.Object3D();
+
+const wireMat = new THREE.LineBasicMaterial({ color: 0x1a1620, transparent: true, opacity: 0.6 });
+
+for (let s = 0; s < strandCount; s++) {
+  const z = -2 - s * (stallRows * spacing / strandCount) - 4;
+  const sway = (s % 2 === 0) ? 1 : -1;
+  const start = new THREE.Vector3(-6.5, 4.6, z);
+  const mid = new THREE.Vector3(sway * 0.6, 3.35, z - 1.2);
+  const end = new THREE.Vector3(6.5, 4.4, z - 2.4);
+  const curve = new THREE.CatmullRomCurve3([start, mid, end]);
+
+  const wirePts = curve.getPoints(20);
+  const wireGeo = new THREE.BufferGeometry().setFromPoints(wirePts);
+  scene.add(new THREE.Line(wireGeo, wireMat));
+
+  for (let b = 0; b < totalBulbsPerStrand; b++) {
+    const t = b / (totalBulbsPerStrand - 1);
+    const p = curve.getPoint(t);
+    dummy.position.copy(p);
+    dummy.scale.setScalar(0.8 + Math.random() * 0.6);
+    dummy.updateMatrix();
+    bulbsInstanced.setMatrixAt(bulbIndex, dummy.matrix);
+    bulbIndex++;
+  }
+}
+scene.add(bulbsInstanced);
+
+// a few real point lights along the garlands for actual illumination (kept sparse for perf)
+for (let i = 0; i < 6; i++) {
+  const pl = new THREE.PointLight(0xffb35c, 1.1, 9, 2);
+  pl.position.set((i % 2 === 0 ? -3 : 3), 4.2, -4 - i * 12);
+  scene.add(pl);
+}
+
+// ---------- neon signs ----------
+function makeNeonTexture(text, color) {
+  const c = document.createElement('canvas');
+  c.width = 1024;
+  c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '800 120px "Segoe UI", Arial, sans-serif';
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 40;
+  ctx.fillStyle = '#fff6e8';
+  ctx.fillText(text, c.width / 2, c.height / 2);
+  ctx.shadowBlur = 20;
+  ctx.fillText(text, c.width / 2, c.height / 2);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+const heroSignTex = makeNeonTexture('KL NIGHT STREET', '#ff8a3d');
+const heroSignMat = new THREE.MeshBasicMaterial({ map: heroSignTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+const heroSign = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5), heroSignMat);
+heroSign.position.set(0, 4.6, -26);
+scene.add(heroSign);
+
+const openSignTex = makeNeonTexture('OPEN TIL 4AM', '#ff5f9e');
+const openSignMat = new THREE.MeshBasicMaterial({ map: openSignTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 });
+const openSign = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.75), openSignMat);
+openSign.position.set(0, 4.4, -68);
+scene.add(openSign);
+
+// ---------- rising steam / ember particles ----------
+const particleCount = 220;
+const positions = new Float32Array(particleCount * 3);
+const speeds = new Float32Array(particleCount);
+const spanZ = 90;
+
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3 + 0] = (Math.random() - 0.5) * 14;
+  positions[i * 3 + 1] = Math.random() * 5;
+  positions[i * 3 + 2] = -Math.random() * spanZ;
+  speeds[i] = 0.25 + Math.random() * 0.5;
+}
+const particleGeo = new THREE.BufferGeometry();
+particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const particleMat = new THREE.PointsMaterial({
+  color: 0xffb98a,
+  size: 0.055,
+  transparent: true,
+  opacity: 0.55,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+// ---------- busker spotlight (appears mid-scroll) ----------
+const busker = new THREE.SpotLight(0xffe3b0, 0, 14, Math.PI / 7, 0.5, 1.5);
+busker.position.set(-2.5, 6, -40);
+busker.target.position.set(-2.5, 0, -40);
+scene.add(busker);
+scene.add(busker.target);
+
+// ---------- postprocessing ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomRes = new THREE.Vector2(
+  Math.max(2, Math.round(window.innerWidth * 0.75)),
+  Math.max(2, Math.round(window.innerHeight * 0.75))
+);
+const bloom = new UnrealBloomPass(bloomRes, 1.15, 0.55, 0.16);
+composer.addPass(bloom);
+
+// ---------- scroll-driven camera ----------
+function getScrollProgress() {
+  const max = document.body.scrollHeight - window.innerHeight;
+  if (max <= 0) return 0;
+  return Math.min(1, Math.max(0, window.scrollY / max));
+}
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const progress = getScrollProgress();
+
+  // dolly the camera down the street as the page scrolls
+  const targetZ = 10 - progress * 96;
+  camera.position.z += (targetZ - camera.position.z) * 0.08;
+  camera.position.y = 2.4 + Math.sin(t * 0.35) * 0.12;
+  camera.position.x = Math.sin(t * 0.2) * 0.4 + Math.sin(progress * Math.PI) * 0.6;
+  camera.lookAt(camera.position.x * 0.3, 2.0, camera.position.z - 12);
+
+  // twinkle the garlands very subtly via bloom strength
+  bloom.strength = 1.15 + Math.sin(t * 3.1) * 0.05 + Math.sin(t * 5.3) * 0.03;
+
+  // rising steam
+  const posAttr = particleGeo.attributes.position;
+  for (let i = 0; i < particleCount; i++) {
+    let y = posAttr.array[i * 3 + 1] + speeds[i] * 0.01;
+    if (y > 6) y = 0;
+    posAttr.array[i * 3 + 1] = y;
+    posAttr.array[i * 3 + 0] += Math.sin(t + i) * 0.0015;
+  }
+  posAttr.needsUpdate = true;
+
+  // busker spotlight fades in during the "experience" beat (~0.55-0.8)
+  const buskerAmt = smoothstep(0.5, 0.7, progress) * (1 - smoothstep(0.82, 0.95, progress));
+  busker.intensity = buskerAmt * 3.2;
+
+  // "open til 4am" sign fades in near the end
+  openSignMat.opacity = smoothstep(0.78, 0.95, progress);
+
+  // hero sign gently fades as we leave the hero beat
+  heroSignMat.opacity = 1 - smoothstep(0.08, 0.22, progress);
+
+  composer.render();
+}
+
+function smoothstep(edge0, edge1, x) {
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+  bloom.resolution.set(
+    Math.max(2, Math.round(window.innerWidth * 0.75)),
+    Math.max(2, Math.round(window.innerHeight * 0.75))
+  );
+});
+</script>
+
+</body>
+</html>

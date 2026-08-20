@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concept 1 — Floating Food Cloud · KL Night Street</title>
+<style>
+  :root{ --amber:#ffb35c; --amber-hot:#ff8a3d; --pink:#ff5f9e; --ink:#05060a; --paper:#f3ead9; --muted:#b9b0a2; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--ink); color:var(--paper); font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif; overflow-x:hidden; }
+  canvas#bg{ position:fixed; inset:0; width:100vw; height:100vh; display:block; z-index:0; }
+  main{ position:relative; z-index:1; }
+  section{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8vh 6vw; text-align:center; pointer-events:none; }
+  .tag{ font-size:11px; letter-spacing:.35em; text-transform:uppercase; color:var(--amber); margin:0 0 14px; font-weight:600; }
+  h1{ font-size:clamp(36px,7vw,88px); font-weight:800; margin:0; letter-spacing:.01em; color:#fff5e6;
+    text-shadow:0 0 6px rgba(255,235,200,.9),0 0 18px rgba(255,179,92,.85),0 0 40px rgba(255,138,61,.6); }
+  h2{ font-size:clamp(22px,3vw,34px); font-weight:700; margin:0 0 10px; color:var(--paper); }
+  p{ font-size:15.5px; line-height:1.7; color:var(--muted); max-width:520px; margin:10px auto 0; }
+  .badge{ margin-top:26px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber-hot); opacity:.85; }
+  .backlink{ position:fixed; top:20px; left:20px; z-index:5; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); text-decoration:none; border:1px solid rgba(255,255,255,.2); padding:8px 14px; border-radius:999px;
+    background:rgba(5,6,10,.5); backdrop-filter:blur(4px); pointer-events:auto; }
+  .backlink:hover{ color:var(--paper); border-color:rgba(255,179,92,.5); }
+  .scroll-cue{ position:fixed; bottom:36px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:.3em;
+    text-transform:uppercase; color:var(--muted); opacity:.7; z-index:2; animation:bob 2.4s infinite ease-in-out; }
+  @keyframes bob{ 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(8px); } }
+</style>
+</head>
+<body>
+
+<a class="backlink" href="compare.html">← Back to compare</a>
+<canvas id="bg"></canvas>
+<div class="scroll-cue">Scroll to drift</div>
+
+<main>
+  <section id="s1">
+    <p class="tag">Concept 01</p>
+    <h1>The Floating<br/>Food Cloud</h1>
+    <p>Every stall is a lit photo frame, hanging loose in the dark like a lantern. Scroll to drift forward through them — tilt your mouse to look around as you pass.</p>
+    <p class="badge">01 / 04 — Ambient drift-through gallery</p>
+  </section>
+  <section id="s2"></section>
+  <section id="s3"></section>
+  <section id="s4">
+    <h2>fatta.kl · Cendawan Goreng · D'Dapur Cik Anur · Hakim Lekor</h2>
+    <p>Nine frames, nine stalls, one slow drift down Kuchai Lama's night row.</p>
+  </section>
+  <section id="s5">
+    <h2>Kuchai Lama, Kuala Lumpur</h2>
+    <p>Open till 4AM, every night.</p>
+    <p class="badge">End of concept 01</p>
+  </section>
+</main>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('bg');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x05060c);
+scene.fog = new THREE.FogExp2(0x05060c, 0.028);
+
+const camera = new THREE.PerspectiveCamera(56, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 0.5, 8);
+
+scene.add(new THREE.AmbientLight(0x2a2440, 0.7));
+scene.add(new THREE.HemisphereLight(0x30284a, 0x0a0810, 0.5));
+
+// ---------- soft bokeh particles ----------
+function makeBokehTexture(){
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(64,64,0,64,64,64);
+  g.addColorStop(0,'rgba(255,220,180,0.9)');
+  g.addColorStop(0.5,'rgba(255,160,110,0.35)');
+  g.addColorStop(1,'rgba(255,120,90,0)');
+  ctx.fillStyle = g; ctx.fillRect(0,0,128,128);
+  return new THREE.CanvasTexture(c);
+}
+const bokehTex = makeBokehTexture();
+const bokehCount = 90;
+const bokehPos = new Float32Array(bokehCount*3);
+const bokehScale = new Float32Array(bokehCount);
+for(let i=0;i<bokehCount;i++){
+  bokehPos[i*3+0] = (Math.random()-0.5)*30;
+  bokehPos[i*3+1] = (Math.random()-0.5)*16;
+  bokehPos[i*3+2] = -Math.random()*130;
+  bokehScale[i] = 0.4 + Math.random()*1.6;
+}
+const bokehGeo = new THREE.BufferGeometry();
+bokehGeo.setAttribute('position', new THREE.BufferAttribute(bokehPos,3));
+const bokehMat = new THREE.PointsMaterial({ map:bokehTex, size:1.6, transparent:true, opacity:0.55,
+  blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true });
+const bokeh = new THREE.Points(bokehGeo, bokehMat);
+scene.add(bokeh);
+
+// ---------- vendor label sprite ----------
+function makeLabelTexture(text){
+  const c = document.createElement('canvas'); c.width = 640; c.height = 128;
+  const ctx = c.getContext('2d');
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font = '600 46px "Segoe UI", Arial, sans-serif';
+  ctx.shadowColor = '#ff8a3d'; ctx.shadowBlur = 18;
+  ctx.fillStyle = '#fff3e2';
+  ctx.fillText(text, 320, 64);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+// ---------- floating photo frames ----------
+const photos = [
+  { src:'images/22.webp', label:'Live Buskers', x:-2.6, y: 1.4, z:  -6, ar: 574/1017 },
+  { src:'images/17.webp', label:'fatta.kl',       x: 2.8, y: -0.4, z: -16, ar: 574/1017 },
+  { src:'images/34.webp', label:'Satay',          x:-3.4, y: -1.0, z: -28, ar: 765/1017 },
+  { src:'images/27.jpg',  label:'Cendawan Goreng',x: 2.2, y:  1.6, z: -40, ar: 4/3 },
+  { src:'images/36.webp', label:'Open-air Tables',x:-2.2, y:  0.4, z: -54, ar: 3/2 },
+  { src:'images/18.webp', label:"D'Dapur Cik Anur",x: 3.0, y: -0.8, z: -68, ar: 574/1017 },
+  { src:'images/41.webp', label:'Hakim Lekor',    x:-2.8, y:  1.2, z: -82, ar: 574/1017 },
+  { src:'images/20.webp', label:'Fresh Fruit',    x: 2.4, y:  0.2, z: -96, ar: 574/1017 },
+  { src:'images/15.webp', label:'Dusk Setup',     x: 0.0, y: -1.4, z:-112, ar: 3/2 },
+];
+
+const texLoader = new THREE.TextureLoader();
+const frames = [];
+
+photos.forEach((p, i) => {
+  const group = new THREE.Group();
+  const h = 2.6;
+  const w = h * p.ar;
+
+  const geo = new THREE.PlaneGeometry(w, h);
+  const mat = new THREE.MeshStandardMaterial({ color:0x1a1a22, roughness:0.8 });
+  const mesh = new THREE.Mesh(geo, mat);
+  group.add(mesh);
+
+  texLoader.load(p.src, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    mat.map = tex;
+    mat.color.set(0xffffff);
+    mat.emissive = new THREE.Color(0x140f08);
+    mat.emissiveIntensity = 0.08;
+    mat.needsUpdate = true;
+  });
+
+  const frameGeo = new THREE.PlaneGeometry(w+0.1, h+0.1);
+  const frameMat = new THREE.MeshBasicMaterial({ color:0xffb35c, transparent:true, opacity:0.85, side:THREE.DoubleSide });
+  const frameMesh = new THREE.Mesh(frameGeo, frameMat);
+  frameMesh.position.z = -0.02;
+  group.add(frameMesh);
+
+  const labelTex = makeLabelTexture(p.label);
+  const labelMat = new THREE.SpriteMaterial({ map:labelTex, transparent:true, opacity:0.9, depthWrite:false });
+  const label = new THREE.Sprite(labelMat);
+  label.scale.set(1.7, 0.34, 1);
+  label.position.set(0, -h/2 - 0.32, 0.05);
+  group.add(label);
+
+  const bulb = new THREE.PointLight(0xffcf9a, 1.1, 5, 2);
+  bulb.position.set(0, 0, 0.8);
+  group.add(bulb);
+
+  group.position.set(p.x, p.y, p.z);
+  group.userData.baseY = p.y;
+  group.userData.phase = i * 1.7;
+  scene.add(group);
+  frames.push(group);
+});
+
+// ---------- postprocessing ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(
+  new THREE.Vector2(Math.max(2,Math.round(window.innerWidth*0.75)), Math.max(2,Math.round(window.innerHeight*0.75))),
+  0.85, 0.6, 0.32);
+composer.addPass(bloom);
+
+// ---------- scroll + mouse parallax ----------
+function getScrollProgress(){
+  const max = document.body.scrollHeight - window.innerHeight;
+  if (max <= 0) return 0;
+  return Math.min(1, Math.max(0, window.scrollY / max));
+}
+
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+const clock = new THREE.Clock();
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const progress = getScrollProgress();
+
+  const targetZ = 8 - progress * 128;
+  camera.position.z += (targetZ - camera.position.z) * 0.07;
+  camera.position.x += ((mouseX * 1.4) - camera.position.x) * 0.03;
+  camera.position.y += ((0.5 + mouseY * 0.8) - camera.position.y) * 0.03;
+  camera.lookAt(camera.position.x * 0.5, camera.position.y * 0.6, camera.position.z - 14);
+
+  frames.forEach(f => {
+    f.position.y = f.userData.baseY + Math.sin(t * 0.5 + f.userData.phase) * 0.12;
+    f.rotation.y = Math.sin(t * 0.3 + f.userData.phase) * 0.08;
+  });
+
+  bloom.strength = 0.85 + Math.sin(t*3.1)*0.05;
+  composer.render();
+}
+animate();
+
+// ---------- resize (guarded against 0x0 pane-hidden events) ----------
+function applySize(w,h){
+  if(!w || !h) return;
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h); composer.setSize(w,h);
+  bloom.resolution.set(Math.max(2,Math.round(w*0.75)), Math.max(2,Math.round(h*0.75)));
+}
+window.addEventListener('resize', () => applySize(window.innerWidth, window.innerHeight));
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') applySize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>

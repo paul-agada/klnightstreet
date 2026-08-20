@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KL Night Street — Rampai Business Park's Night Market</title>
+<meta name="description" content="KL Night Street, Rampai Business Park — one continuous 3D walk down the row: fatta.kl, Cendawan Goreng, D'Dapur Cik Anur, live buskers, open till 4AM." />
+<style>
+  :root{
+    --amber: #ffb35c;
+    --amber-hot: #ff8a3d;
+    --pink: #ff5f9e;
+    --ink: #05060a;
+    --paper: #f3ead9;
+    --muted: #b9b0a2;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  canvas#bg{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    z-index: 0;
+  }
+
+  main{ position: relative; z-index: 1; isolation: isolate; }
+
+  section{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8vh 6vw;
+  }
+
+  .card{
+    max-width: 720px;
+    background: linear-gradient(180deg, rgba(8,9,15,0.86), rgba(6,7,12,0.92));
+    border: 1px solid rgba(255,179,92,0.18);
+    border-radius: 18px;
+    padding: 40px 44px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+  }
+
+  .eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+
+  h1, h2{ margin: 0 0 16px; line-height: 1.05; font-weight: 800; }
+  h2{ font-size: clamp(26px, 3.6vw, 42px); color: var(--paper); }
+  p{ font-size: 17px; line-height: 1.7; color: var(--muted); margin: 0 0 12px; }
+  strong{ color: var(--paper); }
+
+  /* ---------- HERO (text only — the photo itself lives in the 3D scene) ---------- */
+
+  #hero{ position: relative; flex-direction: column; text-align: center; padding-top: 0; pointer-events: none; }
+
+  .neon-title{
+    font-size: clamp(44px, 10vw, 118px);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    margin: 0;
+    color: #fff5e6;
+    text-shadow:
+      0 0 6px rgba(255,235,200,0.9),
+      0 0 18px rgba(255,179,92,0.85),
+      0 0 40px rgba(255,138,61,0.7),
+      0 0 90px rgba(255,95,158,0.35);
+    animation: flicker 5.5s infinite ease-in-out;
+  }
+
+  .neon-sub{
+    margin-top: 10px;
+    font-size: clamp(14px, 2vw, 20px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-shadow: 0 0 12px rgba(255,179,92,0.7);
+  }
+
+  .hero-tagline{ margin-top: 30px; font-size: 15px; color: var(--muted); letter-spacing: 0.04em; }
+
+  .hero-pills{ display:flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; pointer-events: auto; }
+
+  .pill{
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,179,92,0.35);
+    font-size: 12px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: rgba(5,6,10,0.4);
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  a.pill:hover{
+    transform: translateY(-2px);
+    border-color: rgba(255,179,92,0.75);
+    background: rgba(255,179,92,0.12);
+  }
+
+  .hero-hint{
+    margin-top: 22px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--amber-hot);
+    opacity: 0.85;
+  }
+
+  .scroll-cue{
+    position: absolute; bottom: 42px; left: 50%; transform: translateX(-50%);
+    display:flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0.75; animation: bob 2.4s infinite ease-in-out;
+  }
+  .scroll-cue span{ font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
+  .scroll-cue .line{ width: 1px; height: 42px; background: linear-gradient(180deg, var(--amber), transparent); }
+
+  @keyframes bob{ 0%,100%{ transform: translateX(-50%) translateY(0); } 50%{ transform: translateX(-50%) translateY(10px); } }
+  @keyframes flicker{ 0%,92%,100%{ opacity:1; } 93%{ opacity:.82; } 94%{ opacity:1; } 95%{ opacity:.7; } 96%{ opacity:1; } }
+
+  /* ---------- VENDORS — tilt cards, not backgrounds ---------- */
+
+  #vendors{ align-items: center; }
+  .vendors-wrap{ max-width: 1040px; width: 100%; }
+  .vendors-head{ text-align: center; margin-bottom: 34px; }
+
+  .tilt-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    perspective: 1200px;
+  }
+
+  .tilt-card{
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,179,92,0.2);
+    background: #0b0c12;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    transform-style: preserve-3d;
+    transition: transform 0.12s ease-out, box-shadow 0.2s ease;
+    will-change: transform;
+    scroll-margin-top: 14vh;
+  }
+
+  .tilt-card:hover{ box-shadow: 0 26px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,179,92,0.4); }
+
+  .tilt-card:target{ animation: target-glow 1.8s ease-out 1; }
+  @keyframes target-glow{
+    0%{ box-shadow: 0 0 0 3px rgba(255,179,92,0.9), 0 26px 60px rgba(0,0,0,0.6); }
+    100%{ box-shadow: 0 18px 40px rgba(0,0,0,0.45); }
+  }
+
+  .tilt-card .tilt-inner{
+    position: relative;
+    transform: translateZ(0);
+  }
+
+  .tilt-card img{
+    display:block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transform: translateZ(18px) scale(1.02);
+    transform-style: preserve-3d;
+  }
+
+  .tilt-card .t-body{
+    position: relative;
+    padding: 16px 18px 18px;
+    transform: translateZ(28px);
+    background: linear-gradient(180deg, rgba(11,12,18,0.2), rgba(11,12,18,0.95) 40%);
+    margin-top: -46px;
+  }
+
+  .tilt-card .t-tag{ font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber-hot); margin-bottom: 6px; display:block; }
+  .tilt-card h3{ margin: 0 0 5px; font-size: 18px; color: var(--paper); }
+  .tilt-card p{ font-size: 13px; margin: 0; color: var(--muted); line-height: 1.5; }
+  .tilt-card .t-price{
+    display: inline-block; margin-top: 8px; font-size: 11.5px; color: var(--amber);
+    border: 1px solid rgba(255,179,92,0.35); padding: 3px 10px; border-radius: 999px;
+  }
+
+  .vendors-note{ margin-top: 28px; text-align: center; font-size: 14px; color: var(--muted); }
+
+  /* ---------- EXPERIENCE ---------- */
+
+  .exp-wrap{ max-width: 1040px; width: 100%; }
+  .exp-head{ margin-bottom: 30px; }
+
+  .exp-facts{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 18px;
+    margin-top: 30px;
+  }
+  .exp-fact{
+    display: flex; gap: 12px; align-items: flex-start; padding: 16px;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.02);
+  }
+  .exp-fact .icon{ font-size: 18px; }
+  .exp-fact h4{ margin: 0 0 3px; font-size: 14px; color: var(--paper); }
+  .exp-fact p{ margin: 0; font-size: 13px; color: var(--muted); }
+
+  /* smaller tilt cards for the ambience row */
+  .tilt-grid.small .tilt-card img{ height: 170px; }
+  .tilt-grid.small{ margin-top: 26px; }
+
+  /* ---------- VISIT ---------- */
+
+  #visit .card{ text-align: center; }
+  .visit-address{ font-size: 14px; color: var(--amber); letter-spacing: 0.02em; line-height: 1.6; margin: -6px 0 4px; }
+  .hours-badge{
+    display: inline-flex; align-items: baseline; gap: 10px; margin: 18px 0 22px;
+    padding: 14px 26px; border-radius: 14px; background: rgba(255,95,158,0.08); border: 1px solid rgba(255,95,158,0.3);
+  }
+  .hours-badge .big{ font-size: 28px; font-weight: 800; color: #ffdfc2; text-shadow: 0 0 18px rgba(255,138,61,0.6); }
+  .hours-badge .small{ font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+  .cta-row{ display:flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .btn{
+    display: inline-block; padding: 14px 28px; border-radius: 999px; text-decoration: none;
+    font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn.primary{ background: linear-gradient(135deg, var(--amber-hot), var(--pink)); color: #180a05; box-shadow: 0 10px 30px rgba(255,138,61,0.35); }
+  .btn.ghost{ border: 1px solid rgba(255,255,255,0.25); color: var(--paper); }
+  .btn:hover{ transform: translateY(-2px); }
+
+  footer{ position: relative; z-index: 1; text-align: center; padding: 40px 20px 60px; font-size: 12px; letter-spacing: 0.08em; color: #6b6459; }
+  footer a{ color: var(--amber); text-decoration: none; }
+
+  @media (max-width: 640px){
+    .card{ padding: 28px 24px; }
+    section{ padding: 10vh 5vw; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<main>
+
+  <section id="hero">
+    <p class="eyebrow">Rampai Business Park · Kuala Lumpur</p>
+    <h1 class="neon-title">KL NIGHT<br/>STREET</h1>
+    <p class="neon-sub">A Night Market That Only Wakes After Dark</p>
+    <p class="hero-tagline">fatta.kl · Cendawan Goreng · D'Dapur Cik Anur · live buskers · open till 4AM</p>
+    <div class="hero-pills">
+      <a class="pill" href="#vendor-fatta">Palestinian Food</a>
+      <a class="pill" href="#vendor-ddapur">Malay Comfort Food</a>
+      <a class="pill" href="#vendor-hakim">Keropok Lekor</a>
+      <a class="pill" href="#exp-buskers">Live Music</a>
+    </div>
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <div class="line"></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="card">
+      <p class="eyebrow">The Street</p>
+      <h2>A culinary haven that comes alive after dark.</h2>
+      <p>Nestled in <strong>Rampai Business Park</strong>, KL Night Street is where the city exhales after sunset — tents go up, woks fire up, and buskers set up their mics as the smell of charcoal and spice fills the row. That photo you just walked past? Still hanging up ahead, over the street.</p>
+      <p>It's not one cuisine, it's a whole street of them: Palestinian, Malay, and every fried snack in between, all shoulder to shoulder. Open until <strong>4AM</strong>, every single night.</p>
+    </div>
+  </section>
+
+  <section id="vendors">
+    <div class="vendors-wrap">
+      <div class="vendors-head">
+        <p class="eyebrow" style="text-align:center;">The Stalls</p>
+        <h2 style="text-align:center;">Real vendors. Real menus. Real night.</h2>
+      </div>
+      <div class="tilt-grid" id="vendorGrid">
+
+        <div class="tilt-card" id="vendor-fatta">
+          <div class="tilt-inner">
+            <img src="images/17.webp" alt="fatta.kl stall serving Palestinian food at KL Night Street" />
+            <div class="t-body">
+              <span class="t-tag">Palestinian · fatta.kl</span>
+              <h3>Fatta &amp; Batata Harra</h3>
+              <p>Grilled chicken, fried eggplant, greek yoghurt, crispy bread. Spiced potato cubes with homemade sauce.</p>
+              <span class="t-price">Fatta RM15–18 · Batata Harra RM10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/27.jpg" alt="Cendawan Goreng fried mushroom stall" />
+            <div class="t-body">
+              <span class="t-tag">Snacks · Cendawan Goreng</span>
+              <h3>Cendawan Goreng</h3>
+              <p>Crispy fried mushrooms, straight off the fryer — original, cheese, or spicy cheese.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card" id="vendor-ddapur">
+          <div class="tilt-inner">
+            <img src="images/18.webp" alt="D'Dapur Cik Anur Malay food stall menu board" />
+            <div class="t-body">
+              <span class="t-tag">Malay · D'Dapur Cik Anur</span>
+              <h3>Masakan Panas</h3>
+              <p>Nasi goreng varieties, tomyam, mee &amp; kuey teow, sup tulang, and more — cooked to order.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card" id="vendor-hakim">
+          <div class="tilt-inner">
+            <img src="images/41.webp" alt="Hakim Lekor stall selling keropok lekor and fried snacks" />
+            <div class="t-body">
+              <span class="t-tag">Snacks · Hakim Lekor</span>
+              <h3>Keropok Lekor</h3>
+              <p>Fried fish crackers, samosa, popia otak-otak, and steamboat goreng — the late-night snack stop.</p>
+              <span class="t-price">Samosa RM1.50 · Popia RM0.90</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/23.webp" alt="Pastribella bakery display case with orange loaf, red velvet and banana walnut cake" />
+            <div class="t-body">
+              <span class="t-tag">Bakery · Pastribella</span>
+              <h3>Pastribella</h3>
+              <p>Orange loaf, red velvet, banana walnut — cut to order, still soft.</p>
+              <span class="t-price">Orange Loaf RM12</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/42.webp" alt="Fina Sup Utara stall banner reading 21 Rempah, Sambal Merah" />
+            <div class="t-body">
+              <span class="t-tag">Malay · Fina Sup Utara</span>
+              <h3>Fina Sup Utara</h3>
+              <p>21 Rempah bone soup and fiery sambal merah, simmered fresh through the night.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/29.jpg" alt="Box of fried chicken wings, cheese-loaded fries and spicy mee noodles" />
+            <div class="t-body">
+              <span class="t-tag">Snacks</span>
+              <h3>Crispy Wings &amp; Loaded Fries</h3>
+              <p>Fried chicken wings, cheese-loaded fries, and spicy mee — the shareable box.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/39.webp" alt="Baskets of lok-lok skewers including fishballs, tofu and crab stick" />
+            <div class="t-body">
+              <span class="t-tag">Snacks</span>
+              <h3>Lok-Lok Skewers</h3>
+              <p>Fishballs, tofu, crab stick and more, skewered and grilled to order.</p>
+              <span class="t-price">From RM2 a stick</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/50.webp" alt="Chinese fusion cuisine stall cooking rice set orders" />
+            <div class="t-body">
+              <span class="t-tag">Chinese Fusion</span>
+              <h3>Chinese Fusion Rice Sets</h3>
+              <p>Masakan Cina set nasi — wok-fresh rice sets, menu's on the table.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/45.webp" alt="Chicken and beef satay skewers with peanut sauce from the Limo Gadis stall" />
+            <div class="t-body">
+              <span class="t-tag">Satay · Limo Gadis</span>
+              <h3>Sate Limo Gadis</h3>
+              <p>Chicken and beef satay, grilled to order, with peanut sauce and ketupat sides.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="draft/5.jpg" alt="AyaqKupi.co iced caramel machiato, the stall's best seller" />
+            <div class="t-body">
+              <span class="t-tag">Coffee · AyaqKupi.co</span>
+              <h3>AyaqKupi.co</h3>
+              <p>Caramel machiato and kupi machiato, freshly brewed each cup.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="draft/1.jpg" alt="Buah Potong fresh cut fruit stall banner" />
+            <div class="t-body">
+              <span class="t-tag">Fresh Fruit · Buah Potong</span>
+              <h3>Buah Potong</h3>
+              <p>Fresh fruit, sliced and bagged to order — the cool-down stop on a hot walk.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="vendors-note">Twelve stalls shown here — walk the row and there's always one more worth stopping for.</p>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="exp-wrap">
+      <div class="exp-head">
+        <p class="eyebrow">After Dark</p>
+        <h2>More than food. It's a whole night out.</h2>
+      </div>
+
+      <div class="tilt-grid small" id="expGrid">
+        <div class="tilt-card" id="exp-buskers">
+          <div class="tilt-inner">
+            <img src="images/22.webp" alt="Live buskers performing at KL Night Street" style="object-position:center 20%;" />
+            <div class="t-body"><h3 style="font-size:15px;">Live buskers, every night</h3></div>
+          </div>
+        </div>
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/36.webp" alt="Diners at tables under string lights" />
+            <div class="t-body"><h3 style="font-size:15px;">Open-air tables, packed and easy</h3></div>
+          </div>
+        </div>
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/34.webp" alt="Satay grilling over hot charcoal" />
+            <div class="t-body"><h3 style="font-size:15px;">Satay, straight off the charcoal</h3></div>
+          </div>
+        </div>
+        <div class="tilt-card">
+          <div class="tilt-inner">
+            <img src="images/20.webp" alt="Fresh fruit stall, cut to order" />
+            <div class="t-body"><h3 style="font-size:15px;">Fresh fruit, cut to order</h3></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-facts">
+        <div class="exp-fact"><div class="icon">🛍️</div><div><h4>Stalls Beyond Food</h4><p>Clothing and jewellery finds at prices worth stopping for.</p></div></div>
+        <div class="exp-fact"><div class="icon">🚗</div><div><h4>Free Parking</h4><p>Ample parking, so you can just show up and lepak.</p></div></div>
+        <div class="exp-fact"><div class="icon">🌙</div><div><h4>Open Spaces</h4><p>Comfortable, relaxed seating to slow down and enjoy the night.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit">
+    <div class="card">
+      <p class="eyebrow">Visit Us</p>
+      <h2>Rampai Business Park, Kuala Lumpur</h2>
+      <p class="visit-address">Jalan Rampai Niaga 5, Rampai Business Park<br/>53300 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur</p>
+      <div class="hours-badge">
+        <span class="big">Open Till 4AM</span>
+        <span class="small">Every Night</span>
+      </div>
+      <p>Ample free parking and open-air seating — come as you are, stay as late as you like.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://www.google.com/maps/search/Jalan+Rampai+Niaga+5,+Rampai+Business+Park,+53300+Kuala+Lumpur,+Wilayah+Persekutuan+Kuala+Lumpur" target="_blank" rel="noopener">Get Directions</a>
+        <a class="btn ghost" href="#hero">Back to Top</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR · OPEN UNTIL 4AM
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('bg');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+const bgColor = 0x05060c;
+scene.background = new THREE.Color(bgColor);
+scene.fog = new THREE.FogExp2(bgColor, 0.045);
+
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 2.4, 10);
+
+// ---------- lights ----------
+scene.add(new THREE.AmbientLight(0x1a1830, 0.6));
+scene.add(new THREE.HemisphereLight(0x2a2440, 0x08060a, 0.5));
+
+// ---------- ground ----------
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x14131a, roughness: 0.85, metalness: 0.1 });
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(24, 220), groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.z = -90;
+scene.add(ground);
+
+const stripMat = new THREE.MeshStandardMaterial({ color: 0x1c1a22, roughness: 0.4, metalness: 0.3 });
+const strip = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 220), stripMat);
+strip.rotation.x = -Math.PI / 2;
+strip.position.set(0, 0.01, -90);
+scene.add(strip);
+
+// ---------- stalls ----------
+const canopyColors = [0xffb35c, 0xff8a3d, 0xffd27a, 0xff6f61];
+const stallGroup = new THREE.Group();
+scene.add(stallGroup);
+
+function makeStall(x, z, side) {
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x0e0d12, roughness: 0.9 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 1.6), bodyMat);
+  body.position.y = 0.8;
+  g.add(body);
+
+  const canopyColor = canopyColors[Math.floor(Math.random() * canopyColors.length)];
+  const canopyMat = new THREE.MeshStandardMaterial({
+    color: canopyColor, roughness: 0.6, emissive: new THREE.Color(canopyColor).multiplyScalar(0.12),
+  });
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.18, 2.0), canopyMat);
+  canopy.position.y = 1.75;
+  canopy.rotation.z = side * -0.05;
+  g.add(canopy);
+
+  const bulb = new THREE.PointLight(canopyColor, 1.4, 5, 2);
+  bulb.position.set(0, 1.5, side * 0.6);
+  g.add(bulb);
+
+  g.position.set(x, 0, z);
+  return g;
+}
+
+const stallRows = 8;
+const spacing = 8;
+for (let i = 0; i < stallRows; i++) {
+  const z = -6 - i * spacing;
+  stallGroup.add(makeStall(-5.2, z, 1));
+  stallGroup.add(makeStall(5.2, z + spacing / 2, -1));
+}
+
+// ---------- garland string lights ----------
+const bulbGeo = new THREE.SphereGeometry(0.055, 8, 8);
+const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffcf8a });
+const totalBulbsPerStrand = 26;
+const strandCount = 9;
+const bulbsInstanced = new THREE.InstancedMesh(bulbGeo, bulbMat, totalBulbsPerStrand * strandCount);
+let bulbIndex = 0;
+const dummy = new THREE.Object3D();
+const wireMat = new THREE.LineBasicMaterial({ color: 0x1a1620, transparent: true, opacity: 0.6 });
+
+for (let s = 0; s < strandCount; s++) {
+  const z = -2 - s * (stallRows * spacing / strandCount) - 4;
+  const sway = (s % 2 === 0) ? 1 : -1;
+  const start = new THREE.Vector3(-6.5, 4.6, z);
+  const mid = new THREE.Vector3(sway * 0.6, 3.35, z - 1.2);
+  const end = new THREE.Vector3(6.5, 4.4, z - 2.4);
+  const curve = new THREE.CatmullRomCurve3([start, mid, end]);
+  const wirePts = curve.getPoints(20);
+  const wireGeo = new THREE.BufferGeometry().setFromPoints(wirePts);
+  scene.add(new THREE.Line(wireGeo, wireMat));
+
+  for (let b = 0; b < totalBulbsPerStrand; b++) {
+    const t = b / (totalBulbsPerStrand - 1);
+    const p = curve.getPoint(t);
+    dummy.position.copy(p);
+    dummy.scale.setScalar(0.8 + Math.random() * 0.6);
+    dummy.updateMatrix();
+    bulbsInstanced.setMatrixAt(bulbIndex, dummy.matrix);
+    bulbIndex++;
+  }
+}
+scene.add(bulbsInstanced);
+
+for (let i = 0; i < 6; i++) {
+  const pl = new THREE.PointLight(0xffb35c, 1.1, 9, 2);
+  pl.position.set((i % 2 === 0 ? -3 : 3), 4.2, -4 - i * 12);
+  scene.add(pl);
+}
+
+// ---------- neon text signs ----------
+function makeNeonTexture(text, color) {
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '800 120px "Segoe UI", Arial, sans-serif';
+  ctx.shadowColor = color; ctx.shadowBlur = 40;
+  ctx.fillStyle = '#fff6e8';
+  ctx.fillText(text, c.width / 2, c.height / 2);
+  ctx.shadowBlur = 20;
+  ctx.fillText(text, c.width / 2, c.height / 2);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+const openSignTex = makeNeonTexture('OPEN TIL 4AM', '#ff5f9e');
+const openSignMat = new THREE.MeshBasicMaterial({ map: openSignTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 });
+const openSign = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.75), openSignMat);
+openSign.position.set(0, 4.4, -74);
+scene.add(openSign);
+
+// ---------- HERO PHOTO — lives in the 3D scene, becomes a hanging sign ----------
+// This is the same object the whole way down: it never swaps or cross-fades,
+// it just travels from "hero photo, camera-close" to "framed sign hanging over the row".
+const heroFrameGroup = new THREE.Group();
+scene.add(heroFrameGroup);
+
+const heroStartPos = new THREE.Vector3(0, 2.5, 3.2);
+const heroStartRot = new THREE.Euler(0, 0, 0);
+const heroStartScale = 1;
+
+const heroRestPos = new THREE.Vector3(4.3, 4.35, -22);
+const heroRestRot = new THREE.Euler(-0.04, -0.55, 0.06);
+const heroRestScale = 0.34;
+
+let heroAspect = 574 / 1017; // updated once the texture loads
+let heroMesh = null;
+let heroFrameMesh = null;
+
+const texLoader = new THREE.TextureLoader();
+texLoader.load('images/22.webp', (tex) => {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const img = tex.image;
+  if (img && img.width && img.height) heroAspect = img.width / img.height;
+
+  const baseH = 4.6;
+  const baseW = baseH * heroAspect;
+
+  const geo = new THREE.PlaneGeometry(baseW, baseH);
+  const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7, metalness: 0.05, emissive: 0x1a1408, emissiveIntensity: 0.1 });
+  heroMesh = new THREE.Mesh(geo, mat);
+  heroFrameGroup.add(heroMesh);
+
+  // a thin glowing frame around it, like a hung signboard
+  const frameGeo = new THREE.PlaneGeometry(baseW + 0.16, baseH + 0.16);
+  const frameMat = new THREE.MeshBasicMaterial({ color: 0xffb35c, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+  heroFrameMesh = new THREE.Mesh(frameGeo, frameMat);
+  heroFrameMesh.position.z = -0.02;
+  heroFrameGroup.add(heroFrameMesh);
+
+  heroFrameGroup.position.copy(heroStartPos);
+  heroFrameGroup.rotation.copy(heroStartRot);
+  heroFrameGroup.scale.setScalar(heroStartScale);
+});
+
+const heroBulb = new THREE.PointLight(0xffcf9a, 1.4, 6, 2);
+scene.add(heroBulb);
+
+// ---------- rising steam / ember particles ----------
+const particleCount = 220;
+const positions = new Float32Array(particleCount * 3);
+const speeds = new Float32Array(particleCount);
+const spanZ = 90;
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3 + 0] = (Math.random() - 0.5) * 14;
+  positions[i * 3 + 1] = Math.random() * 5;
+  positions[i * 3 + 2] = -Math.random() * spanZ;
+  speeds[i] = 0.25 + Math.random() * 0.5;
+}
+const particleGeo = new THREE.BufferGeometry();
+particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const particleMat = new THREE.PointsMaterial({ color: 0xffb98a, size: 0.055, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+// ---------- busker spotlight ----------
+const busker = new THREE.SpotLight(0xffe3b0, 0, 14, Math.PI / 7, 0.5, 1.5);
+busker.position.set(-2.5, 6, -40);
+busker.target.position.set(-2.5, 0, -40);
+scene.add(busker);
+scene.add(busker.target);
+
+// ---------- postprocessing ----------
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomRes = new THREE.Vector2(Math.max(2, Math.round(window.innerWidth * 0.75)), Math.max(2, Math.round(window.innerHeight * 0.75)));
+const bloom = new UnrealBloomPass(bloomRes, 1.15, 0.55, 0.16);
+composer.addPass(bloom);
+
+// ---------- scroll-driven camera ----------
+function getScrollProgress() {
+  const max = document.body.scrollHeight - window.innerHeight;
+  if (max <= 0) return 0;
+  return Math.min(1, Math.max(0, window.scrollY / max));
+}
+
+function smoothstep(edge0, edge1, x) {
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
+const clock = new THREE.Clock();
+const tmpPos = new THREE.Vector3();
+const tmpEuler = new THREE.Euler();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const progress = getScrollProgress();
+
+  const targetZ = 10 - progress * 96;
+  camera.position.z += (targetZ - camera.position.z) * 0.08;
+  camera.position.y = 2.4 + Math.sin(t * 0.35) * 0.12;
+  camera.position.x = Math.sin(t * 0.2) * 0.4 + Math.sin(progress * Math.PI) * 0.6;
+  camera.lookAt(camera.position.x * 0.3, 2.0, camera.position.z - 12);
+
+  bloom.strength = 1.15 + Math.sin(t * 3.1) * 0.05 + Math.sin(t * 5.3) * 0.03;
+
+  // hero photo travels from "camera-close hero" to "hanging sign" — one object, no swap
+  if (heroMesh) {
+    const ht = smoothstep(0.0, 0.16, progress);
+    tmpPos.lerpVectors(heroStartPos, heroRestPos, ht);
+    heroFrameGroup.position.copy(tmpPos);
+    heroFrameGroup.rotation.set(
+      THREE.MathUtils.lerp(heroStartRot.x, heroRestRot.x, ht),
+      THREE.MathUtils.lerp(heroStartRot.y, heroRestRot.y, ht),
+      THREE.MathUtils.lerp(heroStartRot.z, heroRestRot.z, ht)
+    );
+    const s = THREE.MathUtils.lerp(heroStartScale, heroRestScale, ht);
+    heroFrameGroup.scale.setScalar(s);
+    heroBulb.position.set(heroFrameGroup.position.x, heroFrameGroup.position.y + 0.3, heroFrameGroup.position.z + 0.6);
+    heroBulb.intensity = 1.0 + ht * 0.8;
+  }
+
+  // rising steam
+  const posAttr = particleGeo.attributes.position;
+  for (let i = 0; i < particleCount; i++) {
+    let y = posAttr.array[i * 3 + 1] + speeds[i] * 0.01;
+    if (y > 6) y = 0;
+    posAttr.array[i * 3 + 1] = y;
+    posAttr.array[i * 3 + 0] += Math.sin(t + i) * 0.0015;
+  }
+  posAttr.needsUpdate = true;
+
+  const buskerAmt = smoothstep(0.4, 0.6, progress) * (1 - smoothstep(0.78, 0.92, progress));
+  busker.intensity = buskerAmt * 3.2;
+
+  openSignMat.opacity = smoothstep(0.82, 0.96, progress);
+
+  composer.render();
+}
+
+animate();
+
+// Guard against 0x0 resize events (fired by some browsers when a tab is
+// backgrounded mid-scroll). Applying a zero size permanently corrupts the
+// bloom composer's render targets -> the canvas goes solid black forever,
+// even after the tab becomes visible again. Skip zero-size events, and
+// re-apply the last known-good size on visibility change just in case.
+let lastW = window.innerWidth;
+let lastH = window.innerHeight;
+
+function applySize(w, h) {
+  if (!w || !h) return; // ignore zero-size events entirely
+  lastW = w; lastH = h;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  composer.setSize(w, h);
+  bloom.resolution.set(Math.max(2, Math.round(w * 0.75)), Math.max(2, Math.round(h * 0.75)));
+}
+
+window.addEventListener('resize', () => applySize(window.innerWidth, window.innerHeight));
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') applySize(window.innerWidth || lastW, window.innerHeight || lastH);
+});
+</script>
+
+<script>
+  // ---------- tilt cards: mouse-driven, with a gentle scroll-based tilt fallback for touch ----------
+  const tiltCards = Array.from(document.querySelectorAll('.tilt-card'));
+
+  tiltCards.forEach(card => {
+    let raf = null;
+    function setTilt(rx, ry){
+      card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    }
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const ry = (px - 0.5) * 16;
+      const rx = (0.5 - py) * 12;
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setTilt(rx, ry));
+    });
+    card.addEventListener('mouseleave', () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setTilt(0, 0));
+    });
+  });
+
+  // subtle scroll-linked tilt for touch/no-hover devices
+  if (window.matchMedia('(hover: none)').matches) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const card = entry.target;
+        const ratio = entry.intersectionRatio;
+        const rx = (ratio - 0.5) * -8;
+        card.style.transform = `rotateX(${rx}deg) rotateY(0deg)`;
+      });
+    }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+    tiltCards.forEach(c => io.observe(c));
+  }
+</script>
+
+</body>
+</html>
