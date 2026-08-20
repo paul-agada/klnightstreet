@@ -5,6 +5,7 @@
 images/video*.html
 images/video*_files/
 
-# Raw/untrimmed source audio (not used by the site directly, and of
-# unconfirmed licensing -- only the trimmed placeholder loop is committed)
-music/Jalur Gemilang*.mp3
+# Raw/untrimmed source audio files (not used by the site directly -- only
+# the trimmed, compressed music/street-ambience-loop.mp3 is committed)
+music/*
+!music/street-ambience-loop.mp3
