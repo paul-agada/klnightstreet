@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>KL Night Street — Rampai Business Park's Night Market</title>
-<meta name="description" content="KL Night Street, Rampai Business Park — one continuous 3D walk down the row: fatta.kl, Cendawan Goreng, D'Dapur Cik Anur, live buskers, open till 4AM." />
+<meta name="description" content="KL Night Street, Rampai Business Park — one continuous 3D walk down the row: fatta.kl, Cendawan Goreng, D'Dapur Cik Anur, live buskers, open till 12AM." />
 <style>
   :root{
     --amber: #ffb35c;
@@ -400,7 +400,7 @@
     <p class="eyebrow">Rampai Business Park · Kuala Lumpur</p>
     <h1 class="neon-title">KL NIGHT<br/>STREET</h1>
     <p class="neon-sub">A Night Market That Only Wakes After Dark</p>
-    <p class="hero-tagline">fatta.kl · Cendawan Goreng · D'Dapur Cik Anur · live buskers · open till 4AM</p>
+    <p class="hero-tagline">fatta.kl · Cendawan Goreng · D'Dapur Cik Anur · live buskers · open till 12AM</p>
     <div class="hero-pills">
       <a class="pill" href="#vendor-fatta">Palestinian Food</a>
       <a class="pill" href="#vendor-ddapur">Malay Comfort Food</a>
@@ -418,7 +418,7 @@
       <p class="eyebrow">The Street</p>
       <h2>A culinary haven that comes alive after dark.</h2>
       <p>Nestled in <strong>Rampai Business Park</strong>, KL Night Street is where the city exhales after sunset — tents go up, woks fire up, and buskers set up their mics as the smell of charcoal and spice fills the row. That photo you just walked past? Still hanging up ahead, over the street.</p>
-      <p>It's not one cuisine, it's a whole street of them: Palestinian, Malay, and every fried snack in between, all shoulder to shoulder. Open until <strong>4AM</strong>, every single night.</p>
+      <p>It's not one cuisine, it's a whole street of them: Palestinian, Malay, and every fried snack in between, all shoulder to shoulder. Open until <strong>12AM</strong>, every single night.</p>
     </div>
   </section>
 
@@ -619,7 +619,7 @@
       <h2>Rampai Business Park, Kuala Lumpur</h2>
       <p class="visit-address">Jalan Rampai Niaga 5, Rampai Business Park<br/>53300 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur</p>
       <div class="hours-badge">
-        <span class="big">Open Till 4AM</span>
+        <span class="big">Open Till 12AM</span>
         <span class="small">Every Night</span>
       </div>
       <p>Ample free parking and open-air seating — come as you are, stay as late as you like.</p>
@@ -633,7 +633,7 @@
 </main>
 
 <footer>
-  <p class="footer-line">KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR · OPEN UNTIL 4AM</p>
+  <p class="footer-line">KL NIGHT STREET · RAMPAI BUSINESS PARK, KUALA LUMPUR · OPEN UNTIL 12AM</p>
   <p class="footer-legal">
     <a href="terms.html">Terms &amp; Conditions</a><span class="dot">·</span><a href="privacy.html">Privacy Policy</a>
   </p>
@@ -784,7 +784,7 @@ function makeNeonTexture(text, color) {
   return tex;
 }
 
-const openSignTex = makeNeonTexture('OPEN TIL 4AM', '#ff5f9e');
+const openSignTex = makeNeonTexture('OPEN TIL 12AM', '#ff5f9e');
 const openSignMat = new THREE.MeshBasicMaterial({ map: openSignTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 });
 const openSign = new THREE.Mesh(new THREE.PlaneGeometry(7, 1.75), openSignMat);
 openSign.position.set(0, 4.4, -74);
