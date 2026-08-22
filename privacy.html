@@ -3,48 +3,175 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Privacy Policy — KL Night Street</title>
+<meta name="description" content="Privacy Policy for the KL Night Street website and visitor experience." />
+<title>Privacy Policy | KL Night Street</title>
 <style>
   :root{
     --amber: #ffb35c;
+    --amber-soft: rgba(255,179,92,0.08);
+    --amber-line: rgba(255,179,92,0.32);
     --ink: #05060a;
     --paper: #f3ead9;
     --muted: #b9b0a2;
+    --line: rgba(255,255,255,0.09);
   }
   *{ box-sizing: border-box; }
-  html, body{
-    margin:0; padding:0; background: var(--ink); color: var(--paper);
+  html{ color-scheme: dark; }
+  body{
+    margin: 0;
+    background:
+      radial-gradient(circle at 50% -10%, rgba(255,179,92,0.10), transparent 36rem),
+      var(--ink);
+    color: var(--paper);
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
   }
-  main{ max-width: 680px; margin: 0 auto; padding: 14vh 6vw 12vh; }
-  .eyebrow{ font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin: 0 0 14px; font-weight: 600; }
-  h1{ font-size: clamp(28px, 5vw, 42px); margin: 0 0 24px; font-weight: 800; }
-  .notice{
-    border: 1px solid rgba(255,179,92,0.3);
-    background: rgba(255,179,92,0.06);
+  main{ max-width: 760px; margin: 0 auto; padding: 11vh 6vw 10vh; }
+  .eyebrow{
+    margin: 0 0 14px;
+    color: var(--amber);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  h1{ margin: 0 0 8px; font-size: clamp(32px, 6vw, 48px); line-height: 1.08; }
+  h2{ margin: 0 0 10px; color: var(--paper); font-size: 19px; line-height: 1.35; }
+  p, li{ color: var(--muted); font-size: 15px; line-height: 1.72; }
+  p{ margin: 0 0 14px; }
+  ul{ margin: 10px 0 14px; padding-left: 22px; }
+  li + li{ margin-top: 6px; }
+  a{ color: var(--amber); }
+  .meta{ margin-bottom: 28px; font-size: 13px; }
+  .review{
+    margin: 0 0 34px;
+    padding: 20px 22px;
+    border: 1px solid var(--amber-line);
     border-radius: 14px;
-    padding: 24px 28px;
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--muted);
+    background: var(--amber-soft);
   }
-  .notice strong{ color: var(--paper); }
-  a.back{
-    display: inline-block; margin-top: 34px; font-size: 13px; letter-spacing: 0.05em;
-    color: var(--amber); text-decoration: none; border: 1px solid rgba(255,179,92,0.35);
-    padding: 10px 20px; border-radius: 999px;
+  .review strong{ display: block; margin-bottom: 7px; color: var(--paper); }
+  .review p{ margin: 0; font-size: 13px; }
+  .review-tag{
+    display: inline-block;
+    margin-right: 7px;
+    padding: 3px 8px;
+    border: 1px solid var(--amber-line);
+    border-radius: 999px;
+    color: var(--amber);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: 1px;
   }
-  a.back:hover{ border-color: rgba(255,179,92,0.7); }
+  .review-line{ font-size: 13px; }
+  section{ padding: 22px 0; border-bottom: 1px solid var(--line); }
+  section:first-of-type{ border-top: 1px solid var(--line); }
+  .placeholder{ color: var(--paper); font-weight: 700; }
+  .legal-nav{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+  .legal-nav a{
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid var(--amber-line);
+    border-radius: 999px;
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .legal-nav a:hover{ border-color: rgba(255,179,92,0.72); }
+  a:focus-visible{ outline: 2px solid var(--amber); outline-offset: 3px; }
+  @media (max-width: 520px){
+    main{ padding-top: 9vh; }
+    .review{ padding: 18px; }
+  }
 </style>
 </head>
 <body>
 <main>
   <p class="eyebrow">KL Night Street</p>
   <h1>Privacy Policy</h1>
-  <div class="notice">
-    <strong>This page is a placeholder.</strong> The actual Privacy Policy for KL Night Street has not been written yet. Replace this notice with your finalized policy before the site goes live — covering what data the site collects (if any), how it's used, and how visitors can contact you about it.
-  </div>
-  <a class="back" href="index.html">← Back to KL Night Street</a>
+  <p class="meta">Draft date: 22 August 2026</p>
+
+  <aside class="review" role="note" aria-label="Legal review required">
+    <strong>Lawyer review required before publication</strong>
+    <p>Confirm the data controller and contact details; prepare the required Bahasa Malaysia version; verify production hosting and log retention; identify any cookies, analytics, forms or marketing tools added before launch; and confirm event-photography practices, overseas processing, retention periods and whether a Data Protection Officer is required.</p>
+  </aside>
+
+  <p>This Policy explains how personal data is handled in connection with the KL Night Street website and visitor experience. It is intended to reflect the Personal Data Protection Act 2010 (Act 709), as amended.</p>
+
+  <section>
+    <h2>1. Who controls your data</h2>
+    <p>The legal operator of KL Night Street is the data controller for personal data it determines how to process. Service providers may process data on the operator's behalf.</p>
+    <p class="review-line"><span class="review-tag">Lawyer review</span>Confirm whether Tera Holdings Sdn Bhd is the operator or only the website provider. Insert the controller's full legal name, company number, address and privacy contact before publication.</p>
+  </section>
+
+  <section>
+    <h2>2. Data we may process</h2>
+    <p>At the draft date, the website has no account, contact form, booking, checkout or payment feature. We may still process:</p>
+    <ul>
+      <li><strong>Technical data:</strong> IP address, browser and device type, requested pages, date and time, referring page and security logs generated by the hosting or content-delivery services.</li>
+      <li><strong>Communications:</strong> your name, contact details and message if you contact us by email, phone, social media or another channel.</li>
+      <li><strong>Event media:</strong> photographs or recordings that may include attendees if event photography is conducted.</li>
+    </ul>
+    <p>Data comes from you, your device, our service providers or authorised event photographers. Providing data directly is generally voluntary. If you do not provide information needed to answer a request, we may be unable to respond.</p>
+  </section>
+
+  <section>
+    <h2>3. Cookies, analytics and external services</h2>
+    <p>The current website code does not set cookies, use browser storage, run analytics or use advertising trackers. The site loads software from jsDelivr, which receives technical connection data needed to deliver that software. Google Maps receives data only if you choose to open the directions link.</p>
+    <p>The production host or content-delivery provider may keep essential security and request logs under its own privacy terms.</p>
+    <p class="review-line"><span class="review-tag">Lawyer review</span>Recheck the deployed site immediately before launch and update this section if hosting, analytics, consent tools, embedded maps, pixels, forms or advertising services change.</p>
+  </section>
+
+  <section>
+    <h2>4. Why we use data</h2>
+    <p>We may use personal data to:</p>
+    <ul>
+      <li>deliver, secure, troubleshoot and improve the website;</li>
+      <li>answer enquiries, complaints and rights requests;</li>
+      <li>operate, document and promote KL Night Street;</li>
+      <li>manage safety, fraud prevention and legal claims; and</li>
+      <li>comply with law and lawful requests.</li>
+    </ul>
+    <p>We will seek consent where required and otherwise process data only as permitted by applicable law. We do not use website visitors' data for direct marketing at launch. If that changes, marketing messages will include a way to opt out.</p>
+  </section>
+
+  <section>
+    <h2>5. Who may receive data</h2>
+    <p>Where necessary for the purposes above, data may be shared with hosting, content-delivery, IT, security and event-service providers; a relevant vendor when you ask us to refer an enquiry; professional advisers and insurers; prospective purchasers of the business; and regulators, courts or authorities where required by law.</p>
+    <p>Some providers may process data outside Malaysia. Where applicable, we will take reasonable steps and use appropriate arrangements for cross-border processing.</p>
+    <p class="review-line"><span class="review-tag">Lawyer review</span>Confirm all providers, processing locations, contracts and cross-border safeguards.</p>
+  </section>
+
+  <section>
+    <h2>6. Retention and security</h2>
+    <p>We keep personal data only as long as reasonably needed for the stated purpose, legal obligations, dispute handling and security. We then delete or anonymise it where reasonably practicable. Service providers may apply their own documented retention periods.</p>
+    <p>We use reasonable administrative, technical and physical safeguards. No internet service is completely secure, so absolute security cannot be guaranteed.</p>
+    <p class="review-line"><span class="review-tag">Lawyer review</span>Replace this general wording with the approved retention schedule and confirmed incident-response contacts.</p>
+  </section>
+
+  <section>
+    <h2>7. Your choices and rights</h2>
+    <p>Subject to Act 709 and applicable exceptions, you may ask to access or correct your personal data; withdraw consent; object to or stop direct marketing; and, where applicable, request data portability. You may also ask about our processing or request deletion where lawful and practicable.</p>
+    <p>To exercise a right, contact <span class="placeholder">[insert privacy email]</span>. We may need information to verify your identity and locate the relevant record.</p>
+  </section>
+
+  <section>
+    <h2>8. Children</h2>
+    <p>The website is not designed to collect personal data from children. A parent or guardian who believes a child has provided personal data should contact us so we can review and, where appropriate, remove it.</p>
+  </section>
+
+  <section>
+    <h2>9. Updates and contact</h2>
+    <p>We may update this Policy when the website, event operations or legal requirements change. The revised date will appear at the top.</p>
+    <p>Privacy contact: <span class="placeholder">[insert privacy email, telephone and business address]</span>.</p>
+    <p>You may also contact or lodge a complaint with Malaysia's <a href="https://www.pdp.gov.my/" rel="noopener noreferrer">Personal Data Protection Commissioner</a>.</p>
+    <p class="review-line"><span class="review-tag">Lawyer review</span>Confirm the effective date, contact details, escalation process and Data Protection Officer details if one is required.</p>
+  </section>
+
+  <nav class="legal-nav" aria-label="Legal pages">
+    <a href="index.html">Back to KL Night Street</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+  </nav>
 </main>
 </body>
 </html>
